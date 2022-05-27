@@ -1,0 +1,200 @@
+@import url('https://fonts.googleapis.com/css2?family=Fira+Sans:wght@100;200;300;400&display=swap');
+
+
+:root {
+  --clr-blue: #1fb6ff;
+  --clr-purple: #7e5bef;
+  --clr-pink: #ff49db;
+  --clr-orange: #ff7849;
+  --clr-green: #13ce66;
+  --clr-yellow: #ffc82c;
+  --clr-gray-dark: #273444;
+  --clr-gray: #8492a6;
+  --clr-gray-light: #d3dce6;
+  --font-size-1: 12px;
+  --font-size-2: 14px;
+  --font-size-3: 16px;
+  --font-size-4: 20px;
+  --font-size-5: 26px;
+  --pad-1: calc(var(--font-size-1) - 6px);
+  --pad-2: var(--font-size-1);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  font-family: 'Fira Sans', sans-serif;
+  font-size: var(--font-size-2);
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  color: #222;
+  background-color: #e5e5f7;
+  background-image: radial-gradient(#444cf7 0.5px, transparent 0.5px), radial-gradient(#444cf7 0.5px, #e5e5f7 0.5px);
+  background-size: 20px 20px;
+  background-position: 0 0, 10px 10px;
+}
+
+body * {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+ul {
+  list-style: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+.icon {
+  pointer-events: none;
+}
+
+/*****************/
+
+#ui_menu {
+  background-color: #d3dce6;
+  padding: var(--pad-2);
+  position: relative;
+  z-index: 1;
+  width: 64px;
+  box-shadow: 2px 2px 5px #0004;
+}
+
+#ui_menu__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pad-2);
+}
+
+.menu__list_app {
+  padding: var(--pad-1);
+  background-color: rgb(246, 246, 211);
+  border-radius: 2px;
+  box-shadow: 1px 1px 2px #0005;
+  cursor: pointer;
+  outline: 1px solid #555;
+  transition: all .2s;
+}
+
+.menu__list_app[data-state="active"] {
+  box-shadow: inset 1px 1px 2px #0005;
+  background-color: snow;
+  outline-color: transparent;
+}
+
+#ui_menu button {
+  all: unset;
+  display: flex; justify-content: center; align-items: center;
+}
+
+#ui_ground {
+  position: relative;
+  flex: 1;
+}
+
+.app_window {
+  min-width: 800px;
+  min-height: 500px;
+  outline: 2px solid #555;
+  border-radius: 2px;
+  box-shadow: 1px 2px 3px hsl(211, 20%, 20%, .5);
+  position: absolute;
+  background-color: white;
+  left: 7em;
+  top: 3em;
+  display: flex;
+  flex-direction: column;
+}
+
+.app_window>*>* {
+  padding: var(--pad-1);
+}
+
+.app_window__header {
+  border-bottom: 1px solid #333;
+  background-color: hsl(211, 73%, 93%);
+  user-select: none;
+}
+
+.app_window__header>* {
+  display: flex;
+  gap: var(--pad-1);
+  align-items: center;
+}
+
+.app_window__header .icon {
+  width: 24px;
+  height: 24px;
+}
+
+.app_window__header_title {
+  font-weight: bold;
+}
+
+.app_window__header_actions {
+  display: flex;
+  gap: var(--pad-1);
+  margin-left: auto;
+}
+
+.app_window__header_actions button {
+  all: unset;
+  width: 24px;
+  height: 24px;
+  border: 1px solid #888;
+  border-radius: 2px;
+  background-color: snow;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.app_window__header_menu {
+  border-top: 1px solid #999;
+  background-color: #f5f6eb;
+  padding: 0;
+  gap: 0;
+}
+
+.app_window__header_menu button {
+  all: unset;
+  padding: var(--pad-1);
+  background-color: whitesmoke;
+  border-right: 1px solid #0005;
+}
+
+.app_window__header_menu button:hover {
+  background-color: #ddd;
+}
+
+.app_window__main {
+  overflow: hidden;
+}
+
+/* Notepad */
+.app_window__main {
+  padding: 0;
+  overflow: hidden;
+  position: relative;
+  height: 100%;
+  flex: 1;
+}
+
+.app_window__main textarea {
+  all: unset;
+  position: absolute;
+  inset: 0;
+  max-height: 100%;
+  background-color: #fff;
+  padding: var(--pad-1);
+}
