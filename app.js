@@ -42,16 +42,7 @@ function dragndrop(el, e) {
   }
 }
 
-// OS
-const os = {
-  apps: {
-    notepad: {
-      title: "Notepad",
-      icon: "./assets/icons/app_notepad.svg",
-      content: `<textarea></textarea>`,
-    },
-  },
-};
+
 
 // Launch app
 function launchApp(appTitle) {
@@ -78,6 +69,17 @@ function launchApp(appTitle) {
     </header>
     <section class="app_window__main">${os.apps[appTitle].content}</section>
     `;
+
+  if (os.apps[appTitle].menu) {
+    os.apps[appTitle].menu.forEach((el) => {
+      const menuItem = document.createElement("li");
+      menuItem.innerHTML = `
+                <button>${el.label}</button>
+            `;
+
+      appWindow.querySelector(".app_window__header_menu").append(menuItem);
+    });
+  }
 
   ui_ground.append(appWindow);
 }
