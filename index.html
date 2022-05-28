@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="style.css" />
-    <title>RMOS</title>
+    <title>RM:OS</title>
   </head>
   <body>
     <nav id="ui_menu">
@@ -17,17 +17,13 @@
           <img class="icon" src="./assets/icons/app_notepad.svg" alt="" />
         </li>
       </ul>
+      <div id="ui_menu__clock">
+        <span id="ui_menu__clock_date">../..</span>
+        <span id="ui_menu__clock_time">..:..</span>
+      </div>
     </nav>
 
     <main id="ui_ground">
-      <div class="modal">
-        <p>Donnez un titre à votre document.</p>
-        <form>
-          <input type="text" placeholder="Titre" spellcheck="false">
-          <button type="submit">Save</button>
-        </form>
-      </div>
-
       <div class="app_window hidden">
         <header class="app_window__header">
           <div class="app_window__header_head">
@@ -62,14 +58,14 @@
               <button>
                 <img
                   class="icon"
-                  src="./assets/shell/notepad/font_decrease.svg"
+                  src="./assets/shell/notepad/zoom_out.svg"
                   alt=""
                 />
               </button>
               <button>
                 <img
                   class="icon"
-                  src="./assets/shell/notepad/font_increase.svg"
+                  src="./assets/shell/notepad/zoom_in.svg"
                   alt=""
                 />
               </button>
@@ -82,8 +78,13 @@
       </div>
     </main>
 
+    <dialog id="ui_modal">
+      <div id="ui_modal__content"></div>
+    </dialog>
+
+    <script src="helpers.js"></script>
     <script src="os.js"></script>
-    <script src="app.js"></script>
+    <script src="main.js"></script>
   </body>
 </html>
 

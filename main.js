@@ -56,20 +56,20 @@ function launchApp(button) {
 
   const appWindow = document.createElement("div");
   appWindow.classList.add("app_window");
-  appWindow.dataset.id = id;
+  appWindow.dataset.appid = id;
   appWindow.innerHTML = `
     <header class="app_window__header">
     <div class="app_window__header_head">
       <img class="icon" src="${app.icon}" alt="" />
       <span class="app_window__header_title">${app.title}</span>
       <div class="app_window__header_actions">
-        <button>
+        <button data-action="minimize">
           <img class="icon" src="./assets/shell/app_minimize.svg" alt="" />
         </button>
-        <button>
+        <button data-action="maximize">
           <img class="icon" src="./assets/shell/app_maximize.svg" alt="" />
         </button>
-        <button>
+        <button data-action="close">
           <img class="icon" src="./assets/shell/app_close.svg" alt="" />
         </button>
       </div>
@@ -135,7 +135,26 @@ function launchApp(button) {
 ui_menu__list.addEventListener("click", (e) => {
   if (!e.target.matches(".menu__list_app")) return;
 
-  launchApp(e.target);
+  if (e.target.closest('[data-state="default"]')) {
+    launchApp(e.target);
+  } else if (e.target.closest('[data-state="minimized"]')) {
+    ui_ground.querySelector(
+      `[data-appid="${e.target.dataset.appid}"]`
+    ).dataset.state = "active";
+  }
 });
 
-// launchApp(ui_menu.querySelector("li:last-of-type"));
+ui_ground.addEventListener("click", (e) => {
+  if (e.target.closest(".app_window__header_actions")) {
+    if (e.target.closest('[data-action="minimize"]')) {
+      e.target.closest(".app_window").dataset.state = "minimized";
+      ui_menu__list.querySelector(
+        `[data-appid="${e.target.closest(".app_window").dataset.appid}"]`
+      ).dataset.state = "minimized";
+    }
+  }
+});
+
+//
+launchApp(ui_menu.querySelector("li:last-of-type"));
+//
