@@ -5,7 +5,7 @@ const os = {
     notepad: {
       title: "Notepad",
       icon: "./assets/icons/app_notepad.svg",
-      content: `<textarea></textarea>`,
+      content: `<textarea spellcheck="false">The quick brown fox jumps over the lazy dog...</textarea>`,
       menu: {
         primary: [
           {
@@ -16,6 +16,19 @@ const os = {
           },
           {
             label: "Save",
+            function(source) {
+              let data = [];
+              if (localStorage.getItem("notepad")) {
+                data = [...JSON.parse(localStorage.getItem("notepad"))];
+              }
+
+              data.push({
+                title: "Mon texte",
+                content: source.querySelector("textarea").value,
+              });
+
+              localStorage.setItem("notepad", JSON.stringify(data));
+            },
           },
         ],
         secondary: [
@@ -24,18 +37,15 @@ const os = {
             icon: "./assets/shell/notepad/font_decrease.svg",
             function(source) {
               let fontSize = parseInt(
-                window.getComputedStyle(
-                  source.closest(".app_window").querySelector("textarea")
-                ).fontSize
+                window.getComputedStyle(source.querySelector("textarea"))
+                  .fontSize
               );
 
               if (fontSize > 64) return;
 
               fontSize += 2;
 
-              source
-                .closest(".app_window")
-                .querySelector("textarea").style.fontSize = fontSize + "px";
+              source.querySelector("textarea").style.fontSize = fontSize + "px";
             },
           },
           {
@@ -43,18 +53,15 @@ const os = {
             icon: "./assets/shell/notepad/font_increase.svg",
             function(source) {
               let fontSize = parseInt(
-                window.getComputedStyle(
-                  source.closest(".app_window").querySelector("textarea")
-                ).fontSize
+                window.getComputedStyle(source.querySelector("textarea"))
+                  .fontSize
               );
 
               if (fontSize < 12) return;
 
               fontSize -= 2;
 
-              source
-                .closest(".app_window")
-                .querySelector("textarea").style.fontSize = fontSize + "px";
+              source.querySelector("textarea").style.fontSize = fontSize + "px";
             },
           },
         ],

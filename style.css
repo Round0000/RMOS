@@ -67,6 +67,7 @@ img {
 
 .icon {
   pointer-events: none;
+  user-select: none;
   max-height: 100%;
   max-width: 100%;
 }
@@ -173,6 +174,12 @@ img {
   display: flex;
   justify-content: center;
   align-items: center;
+  box-shadow: 1px 1px 1px #0005;
+}
+
+.app_window__header_actions button:active {
+  box-shadow: none;
+  transform: translateY(1px);
 }
 
 .app_window__header_menu {
@@ -236,4 +243,51 @@ img {
   max-height: 100%;
   background-color: #fff;
   padding: var(--size-xs);
+}
+
+/* Modal */
+.modal {
+  min-width: 300px;
+  outline: 2px solid #555;
+  border-radius: 2px;
+  box-shadow: 1px 2px 3px hsl(211, 20%, 20%, .5);
+  position: absolute;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-s);
+  padding: var(--size-s);
+}
+
+.modal *:not(input) {
+  user-select: none;
+}
+
+.modal form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-s);
+}
+
+.modal form input {
+  background-color: #333;
+  color: #fff;
+  outline: 2px solid #333;
+  outline-offset: 2px;
+}
+
+.modal form input::placeholder {
+  color: #fffd;
+}
+
+.modal form > * {
+  padding: var(--size-xxs);
+}
+
+.modal form button[type="submit"] {
+  color: #000;
+  align-self: flex-end;
+  border: 2px solid #333;
+  cursor: pointer;
+  padding: var(--size-xxs) var(--size-s);
 }

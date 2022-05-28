@@ -7,8 +7,9 @@ let draggedOffsetY;
 
 document.addEventListener("mousedown", (e) => {
   if (
-    e.target.matches(".app_window__header_head") ||
-    e.target.closest(".app_window__header_head")
+    (e.target.matches(".app_window__header_head") ||
+      e.target.closest(".app_window__header_head")) &&
+    !e.target.closest("button")
   ) {
     dragged = true;
     currentlyDragged = e.target.closest(".app_window");
@@ -97,7 +98,7 @@ function launchApp(button) {
         .querySelector(".app_window__header_menu_primary")
         .append(menuItem);
       menuItem.addEventListener("click", (e) => {
-        el.function(menuItem);
+        el.function(appWindow);
       });
     });
   }
@@ -118,7 +119,7 @@ function launchApp(button) {
         .querySelector(".app_window__header_menu_secondary")
         .append(menuItem);
       menuItem.addEventListener("click", (e) => {
-        el.function(menuItem);
+        el.function(appWindow);
       });
     });
   }
@@ -137,4 +138,4 @@ ui_menu__list.addEventListener("click", (e) => {
   launchApp(e.target);
 });
 
-launchApp(ui_menu.querySelector("li:last-of-type"));
+// launchApp(ui_menu.querySelector("li:last-of-type"));
