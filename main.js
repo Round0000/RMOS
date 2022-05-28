@@ -138,6 +138,7 @@ ui_menu__list.addEventListener("click", (e) => {
   if (e.target.closest('[data-state="default"]')) {
     launchApp(e.target);
   } else if (e.target.closest('[data-state="minimized"]')) {
+    e.target.closest('[data-state="minimized"]').dataset.state = "active";
     ui_ground.querySelector(
       `[data-appid="${e.target.dataset.appid}"]`
     ).dataset.state = "active";
@@ -146,11 +147,21 @@ ui_menu__list.addEventListener("click", (e) => {
 
 ui_ground.addEventListener("click", (e) => {
   if (e.target.closest(".app_window__header_actions")) {
+    const appWindow = e.target.closest(".app_window");
+
     if (e.target.closest('[data-action="minimize"]')) {
-      e.target.closest(".app_window").dataset.state = "minimized";
+      appWindow.dataset.state = "minimized";
       ui_menu__list.querySelector(
-        `[data-appid="${e.target.closest(".app_window").dataset.appid}"]`
+        `[data-appid="${appWindow.dataset.appid}"]`
       ).dataset.state = "minimized";
+    } else if (e.target.closest('[data-action="maximize"]')) {
+      const maximized = appWindow.dataset.maximized === "true";
+      appWindow.dataset.maximized = !maximized;
+    } else if (e.target.closest('[data-action="close"]')) {
+      ui_menu__list.querySelector(
+        `[data-appid="${appWindow.dataset.appid}"]`
+      ).dataset.state = "default";
+      appWindow.remove();
     }
   }
 });
