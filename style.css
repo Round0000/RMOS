@@ -11,13 +11,13 @@
   --clr-gray-dark: #273444;
   --clr-gray: #8492a6;
   --clr-gray-light: #d3dce6;
-  --font-size-1: 12px;
-  --font-size-2: 14px;
-  --font-size-3: 16px;
-  --font-size-4: 20px;
-  --font-size-5: 26px;
-  --pad-1: calc(var(--font-size-1) - 6px);
-  --pad-2: var(--font-size-1);
+  --size-xxs: 6px;
+  --size-xs: 8px;
+  --size-s: 14px;
+  --size-m: 16px;
+  --size-l: 22px;
+  --size-xl: 26px;
+  --size-xxl: 32px;
 }
 
 *,
@@ -28,9 +28,19 @@
   margin: 0;
 }
 
+input,
+button,
+textarea {
+  all: unset;
+}
+
+.hidden {
+  display: none !important;
+}
+
 body {
   font-family: 'Fira Sans', sans-serif;
-  font-size: var(--font-size-2);
+  font-size: var(--size-s);
   height: 100vh;
   overflow: hidden;
   display: flex;
@@ -57,13 +67,15 @@ img {
 
 .icon {
   pointer-events: none;
+  max-height: 100%;
+  max-width: 100%;
 }
 
 /*****************/
 
 #ui_menu {
   background-color: #d3dce6;
-  padding: var(--pad-2);
+  padding: var(--size-xs);
   position: relative;
   z-index: 1;
   width: 64px;
@@ -73,17 +85,17 @@ img {
 #ui_menu__list {
   display: flex;
   flex-direction: column;
-  gap: var(--pad-2);
+  gap: var(--size-xs);
 }
 
 .menu__list_app {
-  padding: var(--pad-1);
+  padding: var(--size-xs);
   background-color: rgb(246, 246, 211);
   border-radius: 2px;
   box-shadow: 1px 1px 2px #0005;
   cursor: pointer;
   outline: 1px solid #555;
-  transition: all .2s;
+  transition: all .1s;
 }
 
 .menu__list_app[data-state="active"] {
@@ -93,13 +105,17 @@ img {
 }
 
 #ui_menu button {
-  all: unset;
-  display: flex; justify-content: center; align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 66px;
+  width: 66px;
 }
 
 #ui_ground {
   position: relative;
   flex: 1;
+  padding: 16px;
 }
 
 .app_window {
@@ -110,14 +126,12 @@ img {
   box-shadow: 1px 2px 3px hsl(211, 20%, 20%, .5);
   position: absolute;
   background-color: white;
-  left: 7em;
-  top: 3em;
   display: flex;
   flex-direction: column;
 }
 
 .app_window>*>* {
-  padding: var(--pad-1);
+  padding: var(--size-xs);
 }
 
 .app_window__header {
@@ -128,13 +142,16 @@ img {
 
 .app_window__header>* {
   display: flex;
-  gap: var(--pad-1);
+  gap: var(--size-xxs);
   align-items: center;
 }
 
-.app_window__header .icon {
-  width: 24px;
-  height: 24px;
+.app_window__header_head {
+  padding: var(--size-xxs);
+}
+
+.app_window__header_head .icon {
+  width: var(--size-l);
 }
 
 .app_window__header_title {
@@ -143,14 +160,13 @@ img {
 
 .app_window__header_actions {
   display: flex;
-  gap: var(--pad-1);
+  gap: var(--size-xxs);
   margin-left: auto;
 }
 
 .app_window__header_actions button {
-  all: unset;
-  width: 24px;
-  height: 24px;
+  height: var(--size-l);
+  width: var(--size-l);
   border: 1px solid #888;
   border-radius: 2px;
   background-color: snow;
@@ -161,28 +177,52 @@ img {
 
 .app_window__header_menu {
   border-top: 1px solid #999;
-  background-color: #f5f6eb;
+  background-color: #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
   padding: 0;
-  gap: 0;
+}
+
+.app_window__header_menu>* {
+  display: flex;
 }
 
 .app_window__header_menu button {
-  all: unset;
-  padding: var(--pad-1);
-  background-color: whitesmoke;
-  border-right: 1px solid #0005;
+  padding: var(--size-xxs);
+  outline: 1px solid #555;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: snow;
+  transition: all .1s;
 }
 
 .app_window__header_menu button:hover {
-  background-color: #ddd;
+  background-color: var(--clr-gray-dark);
+  color: white;
 }
 
-.app_window__main {
-  overflow: hidden;
+.app_window__header_menu button:active {
+  background-color: var(--clr-orange)
 }
+
+.app_window__header_menu_secondary button {
+  padding: 0;
+  min-width: 32px;
+}
+
+.app_window__header_menu button .icon {
+  height: 24px;
+}
+
+.app_window__header_menu_primary {
+  display: flex;
+}
+
 
 /* Notepad */
-.app_window__main {
+.app_window[data-id="notepad"] .app_window__main {
   padding: 0;
   overflow: hidden;
   position: relative;
@@ -190,11 +230,10 @@ img {
   flex: 1;
 }
 
-.app_window__main textarea {
-  all: unset;
+.app_window[data-id="notepad"] .app_window__main textarea {
   position: absolute;
   inset: 0;
   max-height: 100%;
   background-color: #fff;
-  padding: var(--pad-1);
+  padding: var(--size-xs);
 }

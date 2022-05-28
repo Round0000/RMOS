@@ -42,20 +42,28 @@ function dragndrop(el, e) {
   }
 }
 
-
-
 // Launch app
-function launchApp(appTitle) {
+function launchApp(button) {
+  const id = button.dataset.appid;
+
+  if (!os.apps[id]) {
+    console.log("App not found...");
+    return;
+  }
+
+  const app = os.apps[id];
+
   const appWindow = document.createElement("div");
   appWindow.classList.add("app_window");
+  appWindow.dataset.id = id;
   appWindow.innerHTML = `
     <header class="app_window__header">
     <div class="app_window__header_head">
-      <img class="icon" src="${os.apps[appTitle].icon}" alt="" />
-      <span class="app_window__header_title">${os.apps[appTitle].title}</span>
+      <img class="icon" src="${app.icon}" alt="" />
+      <span class="app_window__header_title">${app.title}</span>
       <div class="app_window__header_actions">
         <button>
-          <img class="icon" src="./assets/shell/app_reduce.svg" alt="" />
+          <img class="icon" src="./assets/shell/app_minimize.svg" alt="" />
         </button>
         <button>
           <img class="icon" src="./assets/shell/app_maximize.svg" alt="" />
@@ -65,27 +73,68 @@ function launchApp(appTitle) {
         </button>
       </div>
     </div>
-    <ul class="app_window__header_menu"></ul>
+    <div class="app_window__header_menu">
+        <div class="app_window__header_menu_primary"></div>
+        <div class="app_window__header_menu_secondary"></div>
+    </div>
     </header>
-    <section class="app_window__main">${os.apps[appTitle].content}</section>
+    <section class="app_window__main">${app.content}</section>
     `;
 
-  if (os.apps[appTitle].menu) {
-    os.apps[appTitle].menu.forEach((el) => {
-      const menuItem = document.createElement("li");
-      menuItem.innerHTML = `
-                <button>${el.label}</button>
-            `;
+  if (app.menu.primary) {
+    app.menu.primary.forEach((el) => {
+      const menuItem = document.createElement("button");
+      if (el.icon) {
+        menuItem.innerHTML = `<img
+        class="icon"
+        src="${el.icon}"
+        alt=""
+      />`;
+      } else {
+        menuItem.innerText = el.label;
+      }
+      appWindow
+        .querySelector(".app_window__header_menu_primary")
+        .append(menuItem);
+      menuItem.addEventListener("click", (e) => {
+        el.function(menuItem);
+      });
+    });
+  }
 
-      appWindow.querySelector(".app_window__header_menu").append(menuItem);
+  if (app.menu.secondary) {
+    app.menu.secondary.forEach((el) => {
+      const menuItem = document.createElement("button");
+      if (el.icon) {
+        menuItem.innerHTML = `<img
+        class="icon"
+        src="${el.icon}"
+        alt=""
+      />`;
+      } else {
+        menuItem.innerText = el.label;
+      }
+      appWindow
+        .querySelector(".app_window__header_menu_secondary")
+        .append(menuItem);
+      menuItem.addEventListener("click", (e) => {
+        el.function(menuItem);
+      });
     });
   }
 
   ui_ground.append(appWindow);
+
+  os.appStack.push(app.title);
+  os.activeApp = app.title;
+  appWindow.dataset.state = "active";
+  button.dataset.state = "active";
 }
 
 ui_menu__list.addEventListener("click", (e) => {
-  if (!e.target.matches(".menu__list_app button")) return;
+  if (!e.target.matches(".menu__list_app")) return;
 
-  launchApp(e.target.dataset.apptitle);
+  launchApp(e.target);
 });
+
+launchApp(ui_menu.querySelector("li:last-of-type"));
