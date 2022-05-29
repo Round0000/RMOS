@@ -1,5 +1,22 @@
 const os = {
   appStack: [],
+  fonts: [
+    {
+      name: "Fira Sans",
+      code: "'Fira Sans', sans-serif",
+      id: "fira_sans",
+    },
+    {
+      name: "Fira Mono",
+      code: "'Fira Mono', sans-serif",
+      id: "fira_mono",
+    },
+    {
+      name: "Roboto Slab",
+      code: "'Roboto Slab', sans-serif",
+      id: "roboto_slab",
+    },
+  ],
   functions: {
     updateClock() {
       const now = new Date();
@@ -58,7 +75,7 @@ const os = {
                     }</span>
                   `;
                   item.append(input, label);
-                  ui_modal__content.querySelector("fieldset.list").append(item);
+                  docList.append(item);
                 });
 
                 ui_modal.showModal();
@@ -175,10 +192,38 @@ const os = {
         secondary: [
           {
             label: "Font",
-            icon: "./assets/shell/notepad/zoom_in.svg",
+            icon: "./assets/shell/notepad/font_family.svg",
             function(source) {
+              ui_modal__content.innerHTML = `
+                <p>Sélectionnez la police de texte.</p>
+                <form>
+                  <fieldset class="list"></fieldset>
+                  <div class="modal_actions">
+                    <button type="button" class="btn_cancel">Annuler</button>
+                    <button type="submit" class="btn_submit">Confirmer</button>
+                  </div>
+                </form>
+                `;
+
+              const fontList = ui_modal__content.querySelector("fieldset.list");
+
+              os.fonts.forEach((font) => {
+                const item = document.createElement("div");
+                const input = document.createElement("input");
+                Object.assign(input, {
+                  type: "radio",
+                  name: "font",
+                  id: font.id,
+                  value: font.id,
+                });
+                const label = document.createElement("label");
+                label.setAttribute("for", input.id);
+                label.innerHTML = `<span>${font.name}</span>`;
+                item.append(input, label);
+                label.style.fontFamily = font.code;
+                fontList.append(item);
+              });
               ui_modal.showModal();
-              source.querySelector("textarea").style.fontFamily = "Arial";
             },
           },
           {

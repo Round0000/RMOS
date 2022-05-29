@@ -97,6 +97,13 @@ img {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  transition: margin .3s;
+  /* margin-left: -60px; */
+}
+
+#ui_menu:hover,
+#ui_menu:focus-within {
+  margin: 0;
 }
 
 #ui_menu__list {
@@ -380,4 +387,10 @@ img {
 
 .modal_actions button[type="button"] {
   border-color: #0002;
+}
+
+@media (max-width: 640px) {
+  .app_window {
+    min-width: 90vw;
+  }
 }
