@@ -32,8 +32,10 @@ const os = {
 
                 data = [...JSON.parse(localStorage.getItem("notepad"))];
 
-                const docList = document.createElement("fieldset");
+                const docList =
+                  ui_modal__content.querySelector("fieldset.list");
                 data.forEach((doc) => {
+                  const item = document.createElement("div");
                   const input = document.createElement("input");
                   Object.assign(input, {
                     type: "radio",
@@ -55,17 +57,47 @@ const os = {
                       doc.createdAt.slice(10, 12)
                     }</span>
                   `;
-                  docList.append(input, label);
+                  item.append(input, label);
+                  ui_modal__content.querySelector("fieldset.list").append(item);
                 });
-                ui_modal__content
-                  .querySelector("fieldset.list")
-                  .append(docList);
+
+                ui_modal.showModal();
+
+                ui_modal
+                  .querySelector(".btn_cancel")
+                  .addEventListener("click", (e) => {
+                    ui_modal.close();
+                  });
+
+                ui_modal
+                  .querySelector("form")
+                  .addEventListener("submit", (e) => {
+                    e.preventDefault();
+
+                    if (!e.target.document.value) return;
+
+                    const selected = data.find(
+                      (doc) => doc.createdAt === e.target.document.value
+                    );
+
+                    source.querySelector(
+                      ".app_window__header_title"
+                    ).innerHTML = `
+                    Notepad <span>${selected.title}</span>
+                `;
+                    source.querySelector("textarea").value = selected.content;
+                    source.dataset.currentDocument = selected.createdAt;
+
+                    ui_modal.close();
+                    ui_modal__content.innerHTML = "";
+                  });
               } else {
                 ui_modal__content.innerHTML = `<p>Aucun document disponible.</p>
-                  <div class="modal_actions">
-                    <button class="btn_ok">OK</button>
-                  </div>
-                  `;
+                <div class="modal_actions">
+                  <button class="btn_ok">OK</button>
+                </div>
+                `;
+                ui_modal.showModal();
                 ui_modal
                   .querySelector(".btn_ok")
                   .addEventListener("click", () => {
@@ -73,33 +105,6 @@ const os = {
                     ui_modal__content.innerHTML = "";
                   });
               }
-
-              ui_modal.showModal();
-
-              ui_modal
-                .querySelector(".btn_cancel")
-                .addEventListener("click", (e) => {
-                  ui_modal.close();
-                });
-
-              ui_modal.querySelector("form").addEventListener("submit", (e) => {
-                e.preventDefault();
-
-                if (!e.target.document.value) return;
-
-                const selected = data.find(
-                  (doc) => doc.createdAt === e.target.document.value
-                );
-
-                source.querySelector(".app_window__header_title").innerHTML = `
-                    Notepad <span>${selected.title}</span>
-                `;
-                source.querySelector("textarea").value = selected.content;
-                source.dataset.currentDocument = selected.createdAt;
-
-                ui_modal.close();
-                ui_modal__content.innerHTML = "";
-              });
             },
           },
           {
@@ -148,11 +153,17 @@ const os = {
 
                     data.push({
                       createdAt: getFormattedDate(new Date(), "YYYYMMDDhhmmss"),
-                      title: e.target.title.value || "Sans titre",
+                      title: e.target.title.value.trim() || "Sans titre",
                       content: source.querySelector("textarea").value,
                     });
 
                     localStorage.setItem("notepad", JSON.stringify(data));
+
+                    source.querySelector(
+                      ".app_window__header_title"
+                    ).innerHTML = `
+                    Notepad <span>${e.target.title.value.trim()}</span>
+                `;
 
                     ui_modal.close();
                     ui_modal__content.innerHTML = "";
@@ -162,6 +173,14 @@ const os = {
           },
         ],
         secondary: [
+          {
+            label: "Font",
+            icon: "./assets/shell/notepad/zoom_in.svg",
+            function(source) {
+              ui_modal.showModal();
+              source.querySelector("textarea").style.fontFamily = "Arial";
+            },
+          },
           {
             label: "Zoom +",
             icon: "./assets/shell/notepad/zoom_in.svg",

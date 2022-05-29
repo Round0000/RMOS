@@ -69,6 +69,9 @@ function launchApp(button) {
         <button data-action="maximize">
           <img class="icon" src="./assets/shell/app_maximize.svg" alt="" />
         </button>
+        <button data-action="restoresize" class="hidden">
+          <img class="icon" src="./assets/shell/app_restoresize.svg" alt="" />
+        </button>
         <button data-action="close">
           <img class="icon" src="./assets/shell/app_close.svg" alt="" />
         </button>
@@ -124,12 +127,19 @@ function launchApp(button) {
     });
   }
 
-  ui_ground.append(appWindow);
+  const stylesheet = document.createElement("link");
+  stylesheet.setAttribute("rel", "stylesheet");
+  fetch(`./assets/styles/apps/${id}.css`).then((res) => {
+    stylesheet.setAttribute("href", `./assets/styles/apps/${id}.css`);
+    document.querySelector("head").append(stylesheet);
 
-  os.appStack.push(app.title);
-  os.activeApp = app.title;
-  appWindow.dataset.state = "active";
-  button.dataset.state = "active";
+    ui_ground.append(appWindow);
+
+    os.appStack.push(id);
+    os.activeApp = app.title;
+    appWindow.dataset.state = "active";
+    button.dataset.state = "active";
+  });
 }
 
 ui_menu__list.addEventListener("click", (e) => {
@@ -154,9 +164,14 @@ ui_ground.addEventListener("click", (e) => {
       ui_menu__list.querySelector(
         `[data-appid="${appWindow.dataset.appid}"]`
       ).dataset.state = "minimized";
-    } else if (e.target.closest('[data-action="maximize"]')) {
+    } else if (
+      e.target.closest('[data-action="maximize"]') ||
+      e.target.closest('[data-action="restoresize"]')
+    ) {
       const maximized = appWindow.dataset.maximized === "true";
       appWindow.dataset.maximized = !maximized;
+      e.target.parentElement.querySelector('[data-action="maximize"]').classList.toggle("hidden");
+      e.target.parentElement.querySelector('[data-action="restoresize"]').classList.toggle("hidden");
     } else if (e.target.closest('[data-action="close"]')) {
       ui_menu__list.querySelector(
         `[data-appid="${appWindow.dataset.appid}"]`
@@ -167,5 +182,5 @@ ui_ground.addEventListener("click", (e) => {
 });
 
 //
-launchApp(ui_menu.querySelector("li:last-of-type"));
+// launchApp(ui_menu.querySelector("li:last-of-type"));
 //
