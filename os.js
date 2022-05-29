@@ -60,6 +60,18 @@ const os = {
                 ui_modal__content
                   .querySelector("fieldset.list")
                   .append(docList);
+              } else {
+                ui_modal__content.innerHTML = `<p>Aucun document disponible.</p>
+                  <div class="modal_actions">
+                    <button class="btn_ok">OK</button>
+                  </div>
+                  `;
+                ui_modal
+                  .querySelector(".btn_ok")
+                  .addEventListener("click", () => {
+                    ui_modal.close();
+                    ui_modal__content.innerHTML = "";
+                  });
               }
 
               ui_modal.showModal();

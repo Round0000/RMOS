@@ -42,7 +42,7 @@ input:focus-visible,
 button:focus-visible,
 textarea:focus-visible {
   outline: 2px solid var(--clr-orange);
-  outline-offset: 2px;
+  outline-offset: -1px;
 }
 
 .hidden {
@@ -164,7 +164,6 @@ img {
 }
 
 .app_window[data-maximized="true"] {
-  transition: all .4s;
   inset: 16px !important;
 }
 
@@ -288,6 +287,10 @@ img {
   background-color: #fff;
   padding: var(--size-xs);
   height: 100%;
+}
+
+.app_window[data-appid="notepad"] .app_window__main textarea:focus-visible {
+  outline: none;
 }
 
 /* Modal */
