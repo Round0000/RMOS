@@ -113,20 +113,13 @@ img {
   cursor: pointer;
   outline: 1px solid #555;
   transition: all .1s;
+  display: flex; justify-content: center; align-items: center;
 }
 
 .menu__list_app[data-state="active"] {
   box-shadow: inset 1px 1px 2px #0005;
   background-color: snow;
   outline-color: transparent;
-}
-
-#ui_menu button {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 66px;
-  width: 66px;
 }
 
 #ui_menu__clock {
