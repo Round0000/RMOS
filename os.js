@@ -25,6 +25,29 @@ const os = {
       });
       return list;
     },
+    modalForm(data) {
+      const modal_content = document.createElement("div");
+      modal_content.id = "ui_modal__content";
+      const p = document.createElement("p");
+      p.innerText = data.text;
+      const form = document.createElement("form");
+      const modal_actions = document.createElement("div");
+      modal_actions.classList.add("modal_actions");
+      const modal_actions__cancel = document.createElement("button");
+      modal_actions__cancel.classList.add("btn_cancel");
+      modal_actions__cancel.type = "button";
+      modal_actions__cancel.addEventListener("click", () => {
+        ui_modal.close();
+        modal_content.remove();
+      });
+      const modal_actions__submit = document.createElement("button");
+      modal_actions__submit.classList.add("btn_submit");
+      modal_actions__cancel.type = "submit";
+      form.append(data.formList, modal_actions);
+      modal_content.append(p, form);
+
+      return modal_content;
+    },
   },
   fonts: [
     {
@@ -235,16 +258,6 @@ const os = {
             label: "Font",
             icon: "./assets/icons/apps/notepad/font_family.svg",
             function(source) {
-              ui_modal__content.innerHTML = `
-                <p>Sélectionnez la police d'écriture.</p>
-                <form>
-                  <div class="modal_actions">
-                    <button type="button" class="btn_cancel">Annuler</button>
-                    <button type="submit" class="btn_submit">Confirmer</button>
-                  </div>
-                </form>
-                `;
-
               const modalFormList = os.components.modalFormList({
                 source: source,
                 arr: os.fonts,
@@ -277,14 +290,15 @@ const os = {
                 if (!e.target.selection.value) return;
 
                 source.querySelector("textarea").style.fontFamily =
-                  os.fonts.find((font) => font.id === e.target.selection.value).code;
+                  os.fonts.find(
+                    (font) => font.id === e.target.selection.value
+                  ).code;
 
                 ui_modal.close();
                 ui_modal__content.innerHTML = "";
               });
 
-              // source.querySelector("textarea").
-
+              ui_modal.append(modalForm());
               ui_modal.showModal();
             },
           },
