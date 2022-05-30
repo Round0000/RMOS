@@ -64,16 +64,16 @@ function launchApp(button) {
       <span class="app_window__header_title">${app.title}</span>
       <div class="app_window__header_actions">
         <button data-action="minimize">
-          <img class="icon" src="./assets/shell/app_minimize.svg" alt="" />
+          <img class="icon" src="./assets/icons/app_minimize.svg" alt="" />
         </button>
         <button data-action="maximize">
-          <img class="icon" src="./assets/shell/app_maximize.svg" alt="" />
+          <img class="icon" src="./assets/icons/app_maximize.svg" alt="" />
         </button>
         <button data-action="restoresize" class="hidden">
-          <img class="icon" src="./assets/shell/app_restoresize.svg" alt="" />
+          <img class="icon" src="./assets/icons/app_restoresize.svg" alt="" />
         </button>
         <button data-action="close">
-          <img class="icon" src="./assets/shell/app_close.svg" alt="" />
+          <img class="icon" src="./assets/icons/app_close.svg" alt="" />
         </button>
       </div>
     </div>
@@ -182,5 +182,5 @@ ui_ground.addEventListener("click", (e) => {
 });
 
 //
-// launchApp(ui_menu.querySelector("li:last-of-type"));
+launchApp(ui_menu.querySelector("button:last-of-type"));
 //

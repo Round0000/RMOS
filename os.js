@@ -1,5 +1,31 @@
 const os = {
   appStack: [],
+  components: {
+    modalFormList(data) {
+      const list = document.createElement("fieldset");
+      list.classList.add("modal_form_list");
+      data.arr.forEach((el) => {
+        const item = document.createElement("div");
+        const input = document.createElement("input");
+        Object.assign(input, {
+          type: "radio",
+          name: "selection",
+          id: el.id,
+          value: el.id,
+        });
+
+        const label = document.createElement("label");
+        label.setAttribute("for", input.id);
+
+        label.innerHTML = `<span>${el[data.labelText]}</span>`;
+
+        item.append(input, label);
+
+        list.append(item);
+      });
+      return list;
+    },
+  },
   fonts: [
     {
       name: "Fira Sans",
@@ -16,6 +42,21 @@ const os = {
       code: "'Roboto Slab', sans-serif",
       id: "roboto_slab",
     },
+    {
+      name: "Lora",
+      code: "'Lora', serif",
+      id: "lora",
+    },
+    {
+      name: "Montserrat",
+      code: "'Montserrat', sans-serif",
+      id: "montserrat",
+    },
+    {
+      name: "Roboto Condensed",
+      code: "'Roboto Condensed', sans-serif",
+      id: "roboto_condensed",
+    },
   ],
   functions: {
     updateClock() {
@@ -27,8 +68,8 @@ const os = {
   apps: {
     notepad: {
       title: "Notepad",
-      icon: "./assets/icons/app_notepad.svg",
-      content: `<textarea spellcheck="false">The quick brown fox jumps over the lazy dog...</textarea>`,
+      icon: "./assets/icons/apps/app_notepad.svg",
+      content: `<textarea spellcheck="false"></textarea>`,
       menu: {
         primary: [
           {
@@ -50,7 +91,7 @@ const os = {
                 data = [...JSON.parse(localStorage.getItem("notepad"))];
 
                 const docList =
-                  ui_modal__content.querySelector("fieldset.list");
+                  ui_modal__content.querySelector(".modal_form_list");
                 data.forEach((doc) => {
                   const item = document.createElement("div");
                   const input = document.createElement("input");
@@ -63,8 +104,8 @@ const os = {
                   const label = document.createElement("label");
                   label.setAttribute("for", input.id);
                   label.innerHTML = `
-                    <span>${doc.title}</span>
-                    <span>${
+                    <span data-hook="title">${doc.title}</span>
+                    <span data-hook="date">${
                       doc.createdAt.slice(6, 8) +
                       "/" +
                       doc.createdAt.slice(4, 6) +
@@ -192,12 +233,11 @@ const os = {
         secondary: [
           {
             label: "Font",
-            icon: "./assets/shell/notepad/font_family.svg",
+            icon: "./assets/icons/apps/notepad/font_family.svg",
             function(source) {
               ui_modal__content.innerHTML = `
-                <p>Sélectionnez la police de texte.</p>
+                <p>Sélectionnez la police d'écriture.</p>
                 <form>
-                  <fieldset class="list"></fieldset>
                   <div class="modal_actions">
                     <button type="button" class="btn_cancel">Annuler</button>
                     <button type="submit" class="btn_submit">Confirmer</button>
@@ -205,30 +245,52 @@ const os = {
                 </form>
                 `;
 
-              const fontList = ui_modal__content.querySelector("fieldset.list");
-
-              os.fonts.forEach((font) => {
-                const item = document.createElement("div");
-                const input = document.createElement("input");
-                Object.assign(input, {
-                  type: "radio",
-                  name: "font",
-                  id: font.id,
-                  value: font.id,
-                });
-                const label = document.createElement("label");
-                label.setAttribute("for", input.id);
-                label.innerHTML = `<span>${font.name}</span>`;
-                item.append(input, label);
-                label.style.fontFamily = font.code;
-                fontList.append(item);
+              const modalFormList = os.components.modalFormList({
+                source: source,
+                arr: os.fonts,
+                labelText: "name",
               });
+
+              modalFormList.querySelectorAll("label").forEach((label) => {
+                const fontInOS = os.fonts.find(
+                  (item) => item.id === label.getAttribute("for")
+                );
+
+                label.style.fontFamily = fontInOS.code;
+                label.parentElement.addEventListener("click", (e) => {
+                  source.querySelector("textarea").style.fontFamily =
+                    fontInOS.code;
+                });
+              });
+
+              ui_modal__content.querySelector("form").prepend(modalFormList);
+
+              ui_modal
+                .querySelector(".btn_cancel")
+                .addEventListener("click", (e) => {
+                  ui_modal.close();
+                });
+
+              ui_modal.querySelector("form").addEventListener("submit", (e) => {
+                e.preventDefault();
+
+                if (!e.target.selection.value) return;
+
+                source.querySelector("textarea").style.fontFamily =
+                  os.fonts.find((font) => font.id === e.target.selection.value).code;
+
+                ui_modal.close();
+                ui_modal__content.innerHTML = "";
+              });
+
+              // source.querySelector("textarea").
+
               ui_modal.showModal();
             },
           },
           {
             label: "Zoom +",
-            icon: "./assets/shell/notepad/zoom_in.svg",
+            icon: "./assets/icons/apps/notepad/zoom_in.svg",
             function(source) {
               let fontSize = parseInt(
                 window.getComputedStyle(source.querySelector("textarea"))
@@ -244,7 +306,7 @@ const os = {
           },
           {
             label: "Zoom -",
-            icon: "./assets/shell/notepad/zoom_out.svg",
+            icon: "./assets/icons/apps/notepad/zoom_out.svg",
             function(source) {
               let fontSize = parseInt(
                 window.getComputedStyle(source.querySelector("textarea"))

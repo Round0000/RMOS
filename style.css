@@ -1,4 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;500&family=Fira+Sans:wght@100;200;300;400&family=Roboto+Slab:wght@200;400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;500&family=Fira+Sans:wght@100;200;300;400&family=Lora:wght@400;600&family=Montserrat:wght@300;500&family=Roboto+Condensed:wght@300;400;700&family=Roboto+Slab:wght@200;400&display=swap');
+
+
+
 
 
 :root {
@@ -19,9 +22,12 @@
   --size-l: 22px;
   --size-xl: 26px;
   --size-xxl: 32px;
-  --font-base: 'Fira Sans', sans-serif;
+  --font-sans-serif: 'Fira Sans', sans-serif;
   --font-mono: 'Fira Mono', monospace;
+  --font-serif: 'Lora', serif;
   --font-slab: 'Roboto Slab', serif;
+  --font-fancy-sans-serif: 'Montserrat', sans-serif;
+  --font-condensed-sans-serif: 'Roboto Condensed', sans-serif;
 }
 
 *,
@@ -51,7 +57,7 @@ textarea:focus-visible {
 }
 
 body {
-  font-family: var(--font-base);
+  font-family: var(--font-sans-serif);
   font-size: var(--size-s);
   height: 100vh;
   overflow: hidden;
@@ -193,7 +199,7 @@ img {
 }
 
 .app_window__header_title {
-  font-weight: bold;
+  font-weight: 500;
   display: flex;
   flex: 1;
 }
@@ -322,7 +328,7 @@ img {
   color: #fffd;
 }
 
-#ui_modal__content fieldset.list {
+#ui_modal__content .modal_form_list {
   display: flex;
   flex-direction: column;
   background-color: #333;
@@ -332,17 +338,17 @@ img {
   min-width: max-content;
 }
 
-#ui_modal__content fieldset.list > div {
+#ui_modal__content .modal_form_list > div {
   position: relative;
 }
 
-#ui_modal__content fieldset.list input {
+#ui_modal__content .modal_form_list input {
   position: absolute;
   inset: 0;
   z-index: 1;
 }
 
-#ui_modal__content fieldset.list label {
+#ui_modal__content .modal_form_list label {
   padding: var(--size-xxs);
   background-color: white;
   border: 1px solid #333;
@@ -353,19 +359,15 @@ img {
   background-color: #eee;
 }
 
-#ui_modal__content fieldset.list label+label {
+#ui_modal__content .modal_form_list label+label {
   margin-top: 0 !important;
 }
 
-#ui_modal__content fieldset.list input:checked+label {
+#ui_modal__content .modal_form_list input:checked+label {
   background-color: #fff;
 }
 
-#ui_modal__content fieldset.list input:checked+label span:first-of-type {
-  color: var(--clr-orange);
-}
-
-#ui_modal__content fieldset.list label span:last-of-type {
+#ui_modal__content .modal_form_list [data-hook="date"] {
   font-weight: 300;
   font-family: var(--font-mono);
   font-size: .8em;
