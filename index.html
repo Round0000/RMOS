@@ -10,10 +10,18 @@
   <body>
     <header id="ui_menu">
       <nav id="ui_menu__list">
-        <button class="menu__list_app" data-appid="settings" data-state="default">
+        <button
+          class="menu__list_app"
+          data-appid="settings"
+          data-state="default"
+        >
           <img class="icon" src="./assets/icons/apps/app_settings.svg" alt="" />
         </button>
-        <button class="menu__list_app" data-appid="notepad" data-state="default">
+        <button
+          class="menu__list_app"
+          data-appid="notepad"
+          data-state="default"
+        >
           <img class="icon" src="./assets/icons/apps/app_notepad.svg" alt="" />
         </button>
       </nav>
@@ -24,64 +32,9 @@
     </header>
 
     <main id="ui_ground">
-      <!-- Example app -->
-      <div class="app_window hidden">
-        <header class="app_window__header">
-          <div class="app_window__header_head">
-            <img class="icon" src="./assets/icons/apps/app_notepad.svg" alt="" />
-            <span class="app_window__header_title">Mon appli</span>
-            <div class="app_window__header_actions">
-              <button>
-                <img
-                  class="icon"
-                  src="./assets/icons/app_minimize.svg"
-                  alt=""
-                />
-              </button>
-              <button>
-                <img
-                  class="icon"
-                  src="./assets/icons/app_maximize.svg"
-                  alt=""
-                />
-              </button>
-              <button>
-                <img class="icon" src="./assets/icons/app_close.svg" alt="" />
-              </button>
-            </div>
-          </div>
-          <div class="app_window__header_menu">
-            <div class="app_window__header_menu_primary">
-              <button>Ouvrir</button>
-              <button>Sauvegarder</button>
-            </div>
-            <div class="app_window__header_menu_secondary">
-              <button>
-                <img
-                  class="icon"
-                  src="./assets/icons/apps/notepad/zoom_out.svg"
-                  alt=""
-                />
-              </button>
-              <button>
-                <img
-                  class="icon"
-                  src="./assets/icons/apps/notepad/zoom_in.svg"
-                  alt=""
-                />
-              </button>
-            </div>
-          </div>
-        </header>
-        <section class="app_window__main">
-          <textarea></textarea>
-        </section>
-      </div>
+      <dialog id="ui_modal"></dialog>
     </main>
 
-    <dialog id="ui_modal"></dialog>
-
-    <script src="helpers.js"></script>
     <script src="os.js"></script>
     <script src="main.js" type="module"></script>
   </body>

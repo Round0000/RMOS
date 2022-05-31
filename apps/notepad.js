@@ -38,10 +38,10 @@ export const app = {
             });
 
             const data = {
-              formList: modalFormList,
+              formContent: modalFormList,
               callback(e) {
                 const selected = documents.find(
-                  (doc) => doc.createdAt === e.target.selection.value
+                  (doc) => doc.createdAt === e.target.userinput.value
                 );
 
                 source.querySelector(".app_window__header_title").innerHTML = `
@@ -67,7 +67,7 @@ export const app = {
             ui_modal.showModal();
             ui_modal.querySelector(".btn_ok").addEventListener("click", () => {
               ui_modal.close();
-              ui_modal__content.remove();
+              ui_modal.innerHTML = "";
             });
           }
         },
@@ -75,64 +75,46 @@ export const app = {
       {
         label: "Enregistrer",
         callback(source) {
-          let data = [];
+          let docs = [];
           if (localStorage.getItem("notepad")) {
-            data = [...JSON.parse(localStorage.getItem("notepad"))];
+            docs = [...JSON.parse(localStorage.getItem("notepad"))];
           }
 
           if (source.dataset.currentDocument) {
-            data.find(
+            docs.find(
               (doc) => doc.createdAt === source.dataset.currentDocument
             ).content = source.querySelector("textarea").value;
-            localStorage.setItem("notepad", JSON.stringify(data));
+            localStorage.setItem("notepad", JSON.stringify(docs));
           } else {
-            ui_modal.innerHTML = `
-                <div id="ui_modal__content">
-                  <p>Donnez un titre à votre document.</p>
-                  <form>
-                    <input
-                      name="title"
-                      type="text"
-                      placeholder="Titre"
-                      spellcheck="false"
-                      maxlength="42"
-                    />
-                    <div class="modal_actions">
-                      <button type="button" class="btn_cancel">Annuler</button>
-                      <button type="submit" class="btn_submit">Confirmer</button>
-                    </div>
-                  </form>
-                </div>
-                `;
+            const data = {
+              formContent: os.components.modalFormInput({
+                type: "text",
+                placeholder: "Titre",
+                maxlength: 42,
+              }),
+              callback(e) {
+                const docObj = {
+                  createdAt: os.functions.getFormattedDate(
+                    new Date(),
+                    "YYYYMMDDhhmmss"
+                  ),
+                  title: e.target.userinput.value.trim() || "Sans titre",
+                  content: source.querySelector("textarea").value,
+                };
+                docs.push(docObj);
 
+                localStorage.setItem("notepad", JSON.stringify(data));
+
+                source.dataset.currentDocument = docObj.createdAt;
+                source.querySelector(".app_window__header_title").innerHTML = `
+                        Notepad <span>${e.target.userinput.value.trim()}</span>
+                    `;
+              },
+              text: "Donnez un titre à votre document.",
+            };
+
+            ui_modal.append(os.components.modalForm(data));
             ui_modal.showModal();
-
-            ui_modal
-              .querySelector(".btn_cancel")
-              .addEventListener("click", (e) => {
-                ui_modal.close();
-              });
-
-            ui_modal.querySelector("form").addEventListener("submit", (e) => {
-              e.preventDefault();
-
-              const docObj = {
-                createdAt: getFormattedDate(new Date(), "YYYYMMDDhhmmss"),
-                title: e.target.title.value.trim() || "Sans titre",
-                content: source.querySelector("textarea").value,
-              };
-              data.push(docObj);
-
-              localStorage.setItem("notepad", JSON.stringify(data));
-
-              source.dataset.currentDocument = docObj.createdAt;
-              source.querySelector(".app_window__header_title").innerHTML = `
-                    Notepad <span>${e.target.title.value.trim()}</span>
-                `;
-
-              ui_modal.close();
-              ui_modal__content.innerHTML = "";
-            });
           }
         },
       },
@@ -159,10 +141,10 @@ export const app = {
           });
 
           const data = {
-            formList: modalFormList,
+            formContent: modalFormList,
             callback(e) {
               source.querySelector("textarea").style.fontFamily = os.fonts.find(
-                (font) => font.id === e.target.selection.value
+                (font) => font.id === e.target.userinput.value
               ).code;
             },
             text: "Sélectionnez la police d'écriture.",

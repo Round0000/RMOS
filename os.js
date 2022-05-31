@@ -9,7 +9,7 @@ const os = {
         const input = document.createElement("input");
         Object.assign(input, {
           type: "radio",
-          name: "selection",
+          name: "userinput",
           id: el.id,
           value: el.id,
         });
@@ -24,6 +24,21 @@ const os = {
         list.append(item);
       });
       return list;
+    },
+    modalFormInput(data) {
+      const input = document.createElement("input");
+      Object.assign(input, {
+        type: data.type,
+        name: "userinput",
+        placeholder: data.placeholder || "",
+        spellcheck: false,
+        minlength: data.minlength || "",
+        maxlength: data.maxlength || "",
+        max: data.max || "",
+        min: data.min || "",
+      });
+
+      return input;
     },
     modalForm(data) {
       const modal_content = document.createElement("div");
@@ -46,10 +61,10 @@ const os = {
       modal_actions__submit.type = "submit";
       modal_actions__submit.innerText = "Confirmer";
       modal_actions.append(modal_actions__submit);
-      form.append(data.formList, modal_actions);
+      form.append(data.formContent, modal_actions);
       form.addEventListener("submit", (e) => {
         e.preventDefault();
-        if (!e.target.selection.value) return;
+        if (!e.target.userinput.value) return;
 
         data.callback(e);
 
@@ -100,10 +115,33 @@ const os = {
     },
   ],
   functions: {
+    getFormattedDate(date, format) {
+      const YYYY = date.getFullYear().toString();
+      const MM = (date.getMonth() + 1).toString().padStart(2, "0");
+      const DD = date.getDate().toString().padStart(2, "0");
+      const hh = date.getHours().toString().padStart(2, "0");
+      const mm = date.getMinutes().toString().padStart(2, "0");
+      const ss = date.getSeconds().toString().padStart(2, "0");
+
+      format = format.replace("YYYY", YYYY);
+      format = format.replace("MM", MM);
+      format = format.replace("DD", DD);
+      format = format.replace("hh", hh);
+      format = format.replace("mm", mm);
+      format = format.replace("ss", ss);
+
+      return format;
+    },
     updateClock() {
       const now = new Date();
-      ui_menu__clock_date.innerText = getFormattedDate(now, "DD/MM");
-      ui_menu__clock_time.innerText = getFormattedDate(now, "hh:mm");
+      ui_menu__clock_date.innerText = os.functions.getFormattedDate(
+        now,
+        "DD/MM"
+      );
+      ui_menu__clock_time.innerText = os.functions.getFormattedDate(
+        now,
+        "hh:mm"
+      );
     },
   },
 };
