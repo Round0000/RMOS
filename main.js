@@ -29,6 +29,7 @@ document.addEventListener("mousemove", (e) => {
 });
 
 function dragndrop(el, e) {
+  console.log(e);
   if (el.getBoundingClientRect().left <= 0) {
     el.style.left = "0";
   } else {
@@ -47,17 +48,14 @@ function dragndrop(el, e) {
 function launchApp(button) {
   const id = button.dataset.appid;
 
-  if (!os.apps[id]) {
-    console.log("App not found...");
-    return;
-  }
+  import(`./apps/${id}.js`)
+    .then((module) => {
+      const app = module.app;
 
-  const app = os.apps[id];
-
-  const appWindow = document.createElement("div");
-  appWindow.classList.add("app_window");
-  appWindow.dataset.appid = id;
-  appWindow.innerHTML = `
+      const appWindow = document.createElement("div");
+      appWindow.classList.add("app_window");
+      appWindow.dataset.appid = id;
+      appWindow.innerHTML = `
     <header class="app_window__header">
     <div class="app_window__header_head">
       <img class="icon" src="${app.icon}" alt="" />
@@ -85,61 +83,72 @@ function launchApp(button) {
     <section class="app_window__main">${app.content}</section>
     `;
 
-  if (app.menu.primary) {
-    app.menu.primary.forEach((el) => {
-      const menuItem = document.createElement("button");
-      if (el.icon) {
-        menuItem.innerHTML = `<img
+      if (app.menu.primary) {
+        app.menu.primary.forEach((el) => {
+          const menuItem = document.createElement("button");
+          if (el.icon) {
+            menuItem.innerHTML = `<img
         class="icon"
         src="${el.icon}"
         alt=""
       />`;
-      } else {
-        menuItem.innerText = el.label;
+          } else {
+            menuItem.innerText = el.label;
+          }
+          appWindow
+            .querySelector(".app_window__header_menu_primary")
+            .append(menuItem);
+          menuItem.addEventListener("click", (e) => {
+            el.callback(appWindow);
+          });
+        });
       }
-      appWindow
-        .querySelector(".app_window__header_menu_primary")
-        .append(menuItem);
-      menuItem.addEventListener("click", (e) => {
-        el.function(appWindow);
-      });
-    });
-  }
 
-  if (app.menu.secondary) {
-    app.menu.secondary.forEach((el) => {
-      const menuItem = document.createElement("button");
-      if (el.icon) {
-        menuItem.innerHTML = `<img
+      if (app.menu.secondary) {
+        app.menu.secondary.forEach((el) => {
+          const menuItem = document.createElement("button");
+          if (el.icon) {
+            menuItem.innerHTML = `<img
         class="icon"
         src="${el.icon}"
         alt=""
       />`;
-      } else {
-        menuItem.innerText = el.label;
+          } else {
+            menuItem.innerText = el.label;
+          }
+          appWindow
+            .querySelector(".app_window__header_menu_secondary")
+            .append(menuItem);
+          menuItem.addEventListener("click", (e) => {
+            el.callback(appWindow);
+          });
+        });
       }
-      appWindow
-        .querySelector(".app_window__header_menu_secondary")
-        .append(menuItem);
-      menuItem.addEventListener("click", (e) => {
-        el.function(appWindow);
+
+      if (app.footer) {
+        appWindow.append(
+          os.components.appFooter({
+            footerData: app.footer,
+            appWindow: appWindow,
+          })
+        );
+      }
+
+      const stylesheet = document.createElement("link");
+      stylesheet.setAttribute("rel", "stylesheet");
+      fetch(`./assets/styles/apps/${id}.css`).then((res) => {
+        stylesheet.setAttribute("href", `./assets/styles/apps/${id}.css`);
+        document.querySelector("head").append(stylesheet);
+
+        ui_ground.append(appWindow);
+
+        os.appStack.push(id);
+        os.activeApp = app.title;
+        appWindow.dataset.state = "active";
+        button.dataset.state = "active";
       });
-    });
-  }
-
-  const stylesheet = document.createElement("link");
-  stylesheet.setAttribute("rel", "stylesheet");
-  fetch(`./assets/styles/apps/${id}.css`).then((res) => {
-    stylesheet.setAttribute("href", `./assets/styles/apps/${id}.css`);
-    document.querySelector("head").append(stylesheet);
-
-    ui_ground.append(appWindow);
-
-    os.appStack.push(id);
-    os.activeApp = app.title;
-    appWindow.dataset.state = "active";
-    button.dataset.state = "active";
-  });
+    })
+    .catch((err) => console.log(err));
 }
 
 ui_menu__list.addEventListener("click", (e) => {
@@ -170,8 +179,12 @@ ui_ground.addEventListener("click", (e) => {
     ) {
       const maximized = appWindow.dataset.maximized === "true";
       appWindow.dataset.maximized = !maximized;
-      e.target.parentElement.querySelector('[data-action="maximize"]').classList.toggle("hidden");
-      e.target.parentElement.querySelector('[data-action="restoresize"]').classList.toggle("hidden");
+      e.target.parentElement
+        .querySelector('[data-action="maximize"]')
+        .classList.toggle("hidden");
+      e.target.parentElement
+        .querySelector('[data-action="restoresize"]')
+        .classList.toggle("hidden");
     } else if (e.target.closest('[data-action="close"]')) {
       ui_menu__list.querySelector(
         `[data-appid="${appWindow.dataset.appid}"]`
