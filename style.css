@@ -393,6 +393,6 @@ img {
 
 @media (max-width: 640px) {
   .app_window {
-    min-width: 90vw;
+    min-width: 70vw;
   }
 }
