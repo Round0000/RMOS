@@ -40,7 +40,6 @@ const os = {
       modal_actions.append(modal_actions__cancel);
       modal_actions__cancel.addEventListener("click", () => {
         ui_modal.close();
-        ui_modal.innerHTML = "";
       });
       const modal_actions__submit = document.createElement("button");
       modal_actions__submit.classList.add("btn_submit");
@@ -55,14 +54,12 @@ const os = {
         data.callback(e);
 
         ui_modal.close();
-        ui_modal.innerHTML = "";
       });
       modal_content.append(p, form);
 
       return modal_content;
     },
     appFooter(data) {
-      console.log(data);
       const footer = document.createElement("footer");
       footer.classList.add("app_window__footer");
       footer.innerHTML = data.template;

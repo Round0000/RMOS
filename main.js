@@ -164,6 +164,10 @@ ui_menu__list.addEventListener("click", (e) => {
   }
 });
 
+ui_modal.addEventListener("close", () => {
+  ui_modal.innerHTML = "";
+});
+
 ui_ground.addEventListener("click", (e) => {
   if (e.target.closest(".app_window__header_actions")) {
     const appWindow = e.target.closest(".app_window");

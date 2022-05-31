@@ -161,7 +161,6 @@ export const app = {
           const data = {
             formList: modalFormList,
             callback(e) {
-                console.log(this);
               source.querySelector("textarea").style.fontFamily = os.fonts.find(
                 (font) => font.id === e.target.selection.value
               ).code;
@@ -177,7 +176,6 @@ export const app = {
         label: "Zoom +",
         icon: "./assets/icons/apps/notepad/zoom_in.svg",
         callback(source) {
-          console.log("zoom IN callback");
           let fontSize = parseInt(
             window.getComputedStyle(source.querySelector("textarea")).fontSize
           );
@@ -193,7 +191,6 @@ export const app = {
         label: "Zoom -",
         icon: "./assets/icons/apps/notepad/zoom_out.svg",
         callback(source) {
-          console.log("zoom OUT callback");
           let fontSize = parseInt(
             window.getComputedStyle(source.querySelector("textarea")).fontSize
           );

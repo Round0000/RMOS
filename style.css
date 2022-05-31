@@ -49,7 +49,7 @@ input:focus-visible,
 button:focus-visible,
 textarea:focus-visible {
   outline: 2px solid var(--clr-orange);
-  outline-offset: -1px;
+  outline-offset: -2px;
 }
 
 .hidden {
