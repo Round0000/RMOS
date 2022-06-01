@@ -427,4 +427,10 @@ img {
     flex-direction: column;
     justify-content: center;
   }
+
+  .app_window[data-state="minimized"] {
+    transform: translateY(100%) scale(0);
+    transform-origin: center;
+    visibility: hidden;
+  }
 }
