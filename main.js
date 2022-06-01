@@ -201,7 +201,7 @@ ui_ground.addEventListener("click", (e) => {
 
 //
 console.log(window.visualViewport.height)
-document.body.style.maxWidth = window.visualViewport.height + "px";
+document.body.style.height = Math.floor(window.visualViewport.height) + "px";
 
 launchApp(ui_menu.querySelector("button:last-of-type"));
 //
