@@ -53,6 +53,12 @@ export const app = {
 
                 source.querySelector('[data-hook="chars-count"]').innerText =
                   textarea.value.length;
+
+                function updateWordsCount(str) {
+                  return str.trim().split(/\s+/).length;
+                }
+                source.querySelector('[data-hook="words-count"]').innerText =
+                  updateWordsCount(textarea.value);
               },
               text: "Sélectionnez le document à ouvrir.",
             };
@@ -200,8 +206,13 @@ export const app = {
         data.footer.querySelector('[data-hook="chars-count"]').innerText =
           textarea.value.length;
       }
+      function updateWordsCount(str) {
+        return str.trim().split(/\s+/).length;
+      }
       textarea.addEventListener("keyup", (e) => {
         updateCharsCount();
+        data.footer.querySelector('[data-hook="words-count"]').innerText =
+          updateWordsCount(e.target.value);
       });
     },
   },

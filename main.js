@@ -200,9 +200,8 @@ ui_ground.addEventListener("click", (e) => {
   }
 });
 
-//
-console.log(window.visualViewport.height);
-document.body.style.height = Math.floor(window.visualViewport.height) + "px";
+// Viewport height
+document.body.style.height = window.visualViewport.height + "px";
 
 launchApp(ui_menu.querySelector("button:last-of-type"));
 //
