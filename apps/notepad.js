@@ -47,8 +47,12 @@ export const app = {
                 source.querySelector(".app_window__header_title").innerHTML = `
                     Notepad <span>${selected.title}</span>
                 `;
-                source.querySelector("textarea").value = selected.content;
+                const textarea = source.querySelector("textarea");
+                textarea.value = selected.content;
                 source.dataset.currentDocument = selected.createdAt;
+
+                source.querySelector('[data-hook="chars-count"]').innerText =
+                  textarea.value.length;
               },
               text: "Sélectionnez le document à ouvrir.",
             };
@@ -103,7 +107,7 @@ export const app = {
                 };
                 docs.push(docObj);
 
-                localStorage.setItem("notepad", JSON.stringify(data));
+                localStorage.setItem("notepad", JSON.stringify(docs));
 
                 source.dataset.currentDocument = docObj.createdAt;
                 source.querySelector(".app_window__header_title").innerHTML = `
@@ -185,5 +189,20 @@ export const app = {
         },
       },
     ],
+  },
+  footer: {
+    content: `
+    	<span data-hook="chars-count">0</span> caractères / <span data-hook="words-count">0</span> mots
+    `,
+    callback(data) {
+      const textarea = data.appWindow.querySelector("textarea");
+      function updateCharsCount() {
+        data.footer.querySelector('[data-hook="chars-count"]').innerText =
+          textarea.value.length;
+      }
+      textarea.addEventListener("keyup", (e) => {
+        updateCharsCount();
+      });
+    },
   },
 };

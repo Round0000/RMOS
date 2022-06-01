@@ -126,12 +126,13 @@ function launchApp(button) {
       }
 
       if (app.footer) {
-        appWindow.append(
-          os.components.appFooter({
-            footerData: app.footer,
-            appWindow: appWindow,
-          })
-        );
+        const footer = os.components.appFooter({
+          content: app.footer.content,
+          appWindow: appWindow,
+        });
+
+        appWindow.append(footer);
+        app.footer.callback({ appWindow, footer });
       }
 
       const stylesheet = document.createElement("link");
@@ -199,5 +200,8 @@ ui_ground.addEventListener("click", (e) => {
 });
 
 //
+console.log(window.visualViewport.height)
+document.body.style.maxWidth = window.visualViewport.height + "px";
+
 launchApp(ui_menu.querySelector("button:last-of-type"));
 //

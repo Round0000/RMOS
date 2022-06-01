@@ -174,10 +174,6 @@ img {
   inset: 16px !important;
 }
 
-.app_window>*>* {
-  padding: var(--size-xs);
-}
-
 .app_window__header {
   border-bottom: 2px solid #0009;
   background-color: hsl(211, 73%, 93%);
@@ -275,6 +271,14 @@ img {
 
 .app_window__header_menu_primary {
   display: flex;
+}
+
+/* App window Footer */
+.app_window__footer {
+  background-color: hsl(0, 0%, 98%);
+  padding: var(--size-xxs);
+  border-top: 1px solid;
+  box-shadow: inset 1px 2px 3px #0002;
 }
 
 /* Modal */

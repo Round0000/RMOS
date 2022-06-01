@@ -77,8 +77,7 @@ const os = {
     appFooter(data) {
       const footer = document.createElement("footer");
       footer.classList.add("app_window__footer");
-      footer.innerHTML = data.template;
-      data.init();
+      footer.innerHTML = data.content;
       return footer;
     },
   },
