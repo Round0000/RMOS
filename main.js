@@ -55,6 +55,7 @@ function launchApp(button) {
       const appWindow = document.createElement("div");
       appWindow.classList.add("app_window");
       appWindow.dataset.appid = id;
+      appWindow.dataset.maximized = true;
       appWindow.innerHTML = `
     <header class="app_window__header">
     <div class="app_window__header_head">
@@ -200,7 +201,7 @@ ui_ground.addEventListener("click", (e) => {
 });
 
 //
-console.log(window.visualViewport.height)
+console.log(window.visualViewport.height);
 document.body.style.height = Math.floor(window.visualViewport.height) + "px";
 
 launchApp(ui_menu.querySelector("button:last-of-type"));
