@@ -239,6 +239,7 @@ img {
   justify-content: space-between;
   align-items: stretch;
   padding: 0;
+  position: relative;
 }
 
 .app_window__header_menu>* {
@@ -255,11 +256,6 @@ img {
   transition: all .1s;
 }
 
-.app_window__header_menu_primary button:hover {
-  background-color: var(--clr-gray-dark);
-  color: white;
-}
-
 .app_window__header_menu button:active {
   background-color: var(--clr-orange)
 }
@@ -274,7 +270,47 @@ img {
 }
 
 .app_window__header_menu_primary {
+  width: 128px;
+  position: relative;
+}
+
+.app_window__header_menu_primary .app_window__primary_menu_toggler {
   display: flex;
+  /* gap: 2px; */
+  background-color: #eee;
+  box-shadow: inset 1px 1px 2px #fff, inset -1px -1px 2px #fff;
+  border: 1px solid #0005;
+}
+
+.app_window__header_menu_primary .app_window__primary_menu_toggler .icon {
+  width: 1.5em;
+  height: 1.5em;
+}
+
+.app_window__header_menu_primary:focus-within .app_window__primary_menu_toggler {
+  background-color: #fff;
+}
+
+.app_window__header_menu_primary_list {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100%);
+  z-index: 10;
+  box-shadow: 1px 2px 3px #0005;
+}
+
+.app_window__header_menu_primary_list button {
+  background-color: #eee;
+  justify-content: flex-start;
+  padding-left: 26px;
+}
+
+.app_window__header_menu_primary_list button:hover,
+.app_window__header_menu_primary_list button:focus-visible {
+  background-color: #fff;
 }
 
 /* App window Footer */

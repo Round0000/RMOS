@@ -77,7 +77,9 @@ function launchApp(button) {
       </div>
     </div>
     <div class="app_window__header_menu">
-        <div class="app_window__header_menu_primary"></div>
+        <div class="app_window__header_menu_primary">
+          <div class="app_window__header_menu_primary_list hidden"></div>
+        </div>
         <div class="app_window__header_menu_secondary"></div>
     </div>
     </header>
@@ -85,19 +87,37 @@ function launchApp(button) {
     `;
 
       if (app.menu.primary) {
+        const primaryMenuToggler = document.createElement("button");
+        primaryMenuToggler.innerHTML = `<img class="icon" src="./assets/icons/app_menu.svg" alt="" />` + "Actions";
+        primaryMenuToggler.classList.add("app_window__primary_menu_toggler");
+        appWindow
+          .querySelector(".app_window__header_menu_primary")
+          .prepend(primaryMenuToggler);
+        primaryMenuToggler.addEventListener("click", (e) => {
+          appWindow
+            .querySelector(".app_window__header_menu_primary_list")
+            .classList.toggle("hidden");
+        });
+
+        appWindow
+          .querySelector(".app_window__header_menu_primary")
+          .addEventListener("blur", (e) => {
+            e.target.classList.add("hidden");
+          });
+
         app.menu.primary.forEach((el) => {
           const menuItem = document.createElement("button");
           if (el.icon) {
             menuItem.innerHTML = `<img
-        class="icon"
-        src="${el.icon}"
-        alt=""
-      />`;
+              class="icon"
+              src="${el.icon}"
+              alt=""
+            />`;
           } else {
             menuItem.innerText = el.label;
           }
           appWindow
-            .querySelector(".app_window__header_menu_primary")
+            .querySelector(".app_window__header_menu_primary_list")
             .append(menuItem);
           menuItem.addEventListener("click", (e) => {
             el.callback(appWindow);
@@ -138,7 +158,7 @@ function launchApp(button) {
 
       const stylesheet = document.createElement("link");
       stylesheet.setAttribute("rel", "stylesheet");
-      fetch(`./assets/styles/apps/${id}.css`).then((res) => {
+      fetch(`./assets/styles/apps/${id}.css`).then(() => {
         stylesheet.setAttribute("href", `./assets/styles/apps/${id}.css`);
         document.querySelector("head").append(stylesheet);
 
