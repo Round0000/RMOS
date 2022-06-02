@@ -2,37 +2,69 @@ export const app = {
   title: "Notepad",
   icon: "./assets/icons/apps/app_notepad.svg",
   content: `<textarea spellcheck="false"></textarea>`,
+  functions: {
+    initNewDocument() {
+      const textarea = source.querySelector("textarea");
+      textarea.value = "";
+      source.dataset.currentDocument = "";
+      source.dataset.saveState = "clean";
+      source.querySelector(".app_window__header_title").innerText = "Notepad";
+      source.querySelector(
+        "footer"
+      ).innerHTML = `<span data-hook="chars-count">0</span> caractères / <span data-hook="words-count">0</span> mots`;
+    },
+  },
   menu: {
     primary: [
       {
         label: "Nouveau",
         callback(source) {
-          function initNewDocument() {
-            const textarea = source.querySelector("textarea");
-            textarea.value = "";
-            source.dataset.currentDocument = "";
-            source.dataset.saveState = "clean";
-            source.querySelector(".app_window__header_title").innerText =
-              "Notepad";
-              console.log(self.app)
-            // source.querySelector("footer").innerHTML = footer;
-          }
+    //       function initNewDocument() {
+    //         const textarea = source.querySelector("textarea");
+    //         textarea.value = "";
+    //         source.dataset.currentDocument = "";
+    //         source.dataset.saveState = "clean";
+    //         source.querySelector(".app_window__header_title").innerText =
+    //           "Notepad";
+    //         source.querySelector("footer").innerHTML = `
+    // 	<span data-hook="chars-count">0</span> caractères / <span data-hook="words-count">0</span> mots
+    // `;
+    //       }
+          this.call(scope)
           if (source.dataset.saveState === "dirty") {
             ui_modal.append(
               os.components.modalAlert({
-                text: "Votre document comporte des changements non enregistrés.\n Continuer tout de même ?",
+                text: "Votre document actuel comporte des changements non enregistrés.\n Continuer tout de même ?",
                 callback(e) {
                   initNewDocument();
                 },
               })
             );
             ui_modal.showModal();
+            ui_modal.querySelector(".btn_submit").focus();
+          } else {
+            initNewDocument();
           }
         },
       },
       {
         label: "Ouvrir",
         callback(source) {
+          if (source.dataset.saveState === "dirty") {
+            ui_modal.append(
+              os.components.modalAlert({
+                text: "Votre document actuel comporte des changements non enregistrés.\n Continuer tout de même ?",
+                callback(e) {
+                  initNewDocument();
+                },
+              })
+            );
+            ui_modal.showModal();
+            ui_modal.querySelector(".btn_submit").focus();
+          } else {
+            initNewDocument();
+          }
+
           if (localStorage.getItem("notepad")) {
             let documents = [...JSON.parse(localStorage.getItem("notepad"))];
             documents.forEach((doc) => {
@@ -95,6 +127,7 @@ export const app = {
 
             ui_modal.append(os.components.modalForm(data));
             ui_modal.showModal();
+            ui_modal.querySelector(".btn_submit").focus();
           } else {
             ui_modal.innerHTML = `
                   <div id="ui_modal__content">
