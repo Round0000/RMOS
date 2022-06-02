@@ -86,9 +86,18 @@ function launchApp(button) {
     <section class="app_window__main">${app.content}</section>
     `;
 
+      button.addEventListener("click", (e) => {
+        const state = appWindow.dataset.state;
+        if (state === "minimized") {
+          appWindow.dataset.state = "active";
+        } else if (state === "active") {
+          appWindow.dataset.state = "minimized";
+        }
+      });
+
       if (app.menu.primary) {
         const primaryMenuToggler = document.createElement("button");
-        primaryMenuToggler.innerHTML = `<img class="icon" src="./assets/icons/app_menu.svg" alt="" />` + "Actions";
+        primaryMenuToggler.innerHTML = `Actions <div class="icon"></div>`;
         primaryMenuToggler.classList.add("app_window__primary_menu_toggler");
         appWindow
           .querySelector(".app_window__header_menu_primary")
@@ -99,11 +108,21 @@ function launchApp(button) {
             .classList.toggle("hidden");
         });
 
-        appWindow
-          .querySelector(".app_window__header_menu_primary")
-          .addEventListener("blur", (e) => {
-            e.target.classList.add("hidden");
-          });
+        appWindow.addEventListener("keyup", (e) => {
+          if (e.key === "Escape") {
+            appWindow
+              .querySelector(".app_window__header_menu_primary_list")
+              .classList.add("hidden");
+          }
+        });
+
+        appWindow.addEventListener("click", (e) => {
+          if (!e.target.closest(".app_window__header_menu_primary")) {
+            appWindow
+              .querySelector(".app_window__header_menu_primary_list")
+              .classList.add("hidden");
+          }
+        });
 
         app.menu.primary.forEach((el) => {
           const menuItem = document.createElement("button");
@@ -121,6 +140,9 @@ function launchApp(button) {
             .append(menuItem);
           menuItem.addEventListener("click", (e) => {
             el.callback(appWindow);
+            appWindow
+              .querySelector(".app_window__header_menu_primary_list")
+              .classList.add("hidden");
           });
         });
       }

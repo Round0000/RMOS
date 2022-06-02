@@ -5,6 +5,16 @@ export const app = {
   menu: {
     primary: [
       {
+        label: "Nouveau",
+        callback(source) {
+          const textarea = source.querySelector("textarea");
+          textarea.value = "";
+          source.dataset.currentDocument = "";
+          source.querySelector(".app_window__header_title").innerText =
+            "Notepad";
+        },
+      },
+      {
         label: "Ouvrir",
         callback(source) {
           if (localStorage.getItem("notepad")) {
@@ -55,7 +65,9 @@ export const app = {
                   textarea.value.length;
 
                 function updateWordsCount(str) {
-                  return str.trim().split(/\s+/).length;
+                  return str.replaceAll(" ", "").length === 0
+                    ? 0
+                    : str.trim().split(/\s+/).length;
                 }
                 source.querySelector('[data-hook="words-count"]').innerText =
                   updateWordsCount(textarea.value);
@@ -207,7 +219,9 @@ export const app = {
           textarea.value.length;
       }
       function updateWordsCount(str) {
-        return str.trim().split(/\s+/).length;
+        return str.replaceAll(" ", "").length === 0
+          ? 0
+          : str.trim().split(/\s+/).length;
       }
       textarea.addEventListener("keyup", (e) => {
         updateCharsCount();
