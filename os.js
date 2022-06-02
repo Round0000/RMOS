@@ -74,6 +74,34 @@ const os = {
 
       return modal_content;
     },
+    modalAlert(data) {
+      const modal_content = document.createElement("div");
+      modal_content.id = "ui_modal__content";
+      const p = document.createElement("p");
+      p.innerText = data.text;
+      const modal_actions = document.createElement("div");
+      modal_actions.classList.add("modal_actions");
+      const modal_actions__cancel = document.createElement("button");
+      modal_actions__cancel.classList.add("btn_cancel");
+      modal_actions__cancel.type = "button";
+      modal_actions__cancel.innerText = "Annuler";
+      modal_actions.append(modal_actions__cancel);
+      modal_actions__cancel.addEventListener("click", () => {
+        ui_modal.close();
+      });
+      const modal_actions__submit = document.createElement("button");
+      modal_actions__submit.classList.add("btn_submit");
+      modal_actions__submit.type = "submit";
+      modal_actions__submit.innerText = "Confirmer";
+      modal_actions__submit.addEventListener("click", (e) => {
+        data.callback(e);
+
+        ui_modal.close();
+      });
+      modal_actions.append(modal_actions__submit);
+      modal_content.append(p, modal_actions);
+      return modal_content;
+    },
     appFooter(data) {
       const footer = document.createElement("footer");
       footer.classList.add("app_window__footer");

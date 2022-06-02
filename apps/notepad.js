@@ -7,11 +7,27 @@ export const app = {
       {
         label: "Nouveau",
         callback(source) {
-          const textarea = source.querySelector("textarea");
-          textarea.value = "";
-          source.dataset.currentDocument = "";
-          source.querySelector(".app_window__header_title").innerText =
-            "Notepad";
+          function initNewDocument() {
+            const textarea = source.querySelector("textarea");
+            textarea.value = "";
+            source.dataset.currentDocument = "";
+            source.dataset.saveState = "clean";
+            source.querySelector(".app_window__header_title").innerText =
+              "Notepad";
+              console.log(self.app)
+            // source.querySelector("footer").innerHTML = footer;
+          }
+          if (source.dataset.saveState === "dirty") {
+            ui_modal.append(
+              os.components.modalAlert({
+                text: "Votre document comporte des changements non enregistrés.\n Continuer tout de même ?",
+                callback(e) {
+                  initNewDocument();
+                },
+              })
+            );
+            ui_modal.showModal();
+          }
         },
       },
       {
@@ -75,6 +91,8 @@ export const app = {
               text: "Sélectionnez le document à ouvrir.",
             };
 
+            source.dataset.saveState = "clean";
+
             ui_modal.append(os.components.modalForm(data));
             ui_modal.showModal();
           } else {
@@ -107,6 +125,7 @@ export const app = {
               (doc) => doc.createdAt === source.dataset.currentDocument
             ).content = source.querySelector("textarea").value;
             localStorage.setItem("notepad", JSON.stringify(docs));
+            source.dataset.saveState = "clean";
           } else {
             const data = {
               formContent: os.components.modalFormInput({
@@ -131,6 +150,8 @@ export const app = {
                 source.querySelector(".app_window__header_title").innerHTML = `
                         Notepad <span>${e.target.userinput.value.trim()}</span>
                     `;
+
+                source.dataset.saveState = "clean";
               },
               text: "Donnez un titre à votre document.",
             };
@@ -224,6 +245,7 @@ export const app = {
           : str.trim().split(/\s+/).length;
       }
       textarea.addEventListener("keyup", (e) => {
+        data.appWindow.dataset.saveState = "dirty";
         updateCharsCount();
         data.footer.querySelector('[data-hook="words-count"]').innerText =
           updateWordsCount(e.target.value);

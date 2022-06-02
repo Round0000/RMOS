@@ -328,7 +328,7 @@ img {
 /* Modal */
 #ui_modal {
   margin: 10vh auto;
-  min-width: max-content;
+  width: clamp(300px, 85vw, 500px);
 }
 
 #ui_modal::backdrop {
@@ -337,11 +337,7 @@ img {
 }
 
 #ui_modal__content {
-  min-width: 300px;
-  /* margin: 20vh auto; */
   border-radius: 2px;
-  /* outline: 2px solid #555; */
-  /* box-shadow: 1px 2px 3px hsl(211, 20%, 20%, .5); */
   background-color: white;
   display: flex;
   flex-direction: column;
