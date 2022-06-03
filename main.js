@@ -29,7 +29,6 @@ document.addEventListener("mousemove", (e) => {
 });
 
 function dragndrop(el, e) {
-  console.log(e);
   if (el.getBoundingClientRect().left <= 0) {
     el.style.left = "0";
   } else {
@@ -65,10 +64,10 @@ function launchApp(button) {
         <button data-action="minimize">
           <img class="icon" src="./assets/icons/app_minimize.svg" alt="" />
         </button>
-        <button data-action="maximize">
+        <button data-action="maximize" class="hidden">
           <img class="icon" src="./assets/icons/app_maximize.svg" alt="" />
         </button>
-        <button data-action="restoresize" class="hidden">
+        <button data-action="restoresize">
           <img class="icon" src="./assets/icons/app_restoresize.svg" alt="" />
         </button>
         <button data-action="close">
@@ -94,6 +93,12 @@ function launchApp(button) {
           appWindow.dataset.state = "minimized";
         }
       });
+
+      appWindow
+        .querySelector(".app_window__header_head")
+        .addEventListener("dblclick", (e) => {
+          appWindow.dataset.maximized = appWindow.dataset.maximized === "false";
+        });
 
       if (app.menu.primary) {
         const primaryMenuToggler = document.createElement("button");
@@ -207,17 +212,6 @@ ui_menu__list.addEventListener("click", (e) => {
     ).dataset.state = "active";
   }
 });
-
-ui_modal.addEventListener("close", () => {
-  ui_modal.innerHTML = "";
-});
-
-document.addEventListener('keyup', e => {
-  console.log(e)
-  if (e.key === "Escape") {
-    ui_modal.innerHTML = "";
-  }
-})
 
 ui_ground.addEventListener("click", (e) => {
   if (e.target.closest(".app_window__header_actions")) {

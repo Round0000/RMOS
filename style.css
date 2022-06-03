@@ -42,9 +42,8 @@ fieldset {
 }
 
 input:focus-visible,
-button:focus-visible,
-textarea:focus-visible {
-  outline: 2px solid var(--clr-orange);
+button:focus-visible {
+  outline: 2px solid var(--clr-orange) !important;
   outline-offset: -2px;
 }
 
@@ -466,8 +465,12 @@ img {
   }
 
   .app_window[data-state="minimized"] {
-    transform: translateY(100%) scale(0);
+    transform: translateY(100vh) scale(0);
     transform-origin: center;
     visibility: hidden;
+  }
+
+  .app_window button[data-action="minimize"] * {
+    transform: rotate(-90deg);
   }
 }

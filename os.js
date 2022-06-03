@@ -1,6 +1,15 @@
 const os = {
   appStack: [],
   components: {
+    modal(data) {
+      const modal = document.createElement("dialog");
+      modal.id = "ui_modal";
+      modal.addEventListener("close", (e) => {
+        modal.remove();
+      });
+      modal.append(data.content);
+      return modal;
+    },
     modalFormList(data) {
       const list = document.createElement("fieldset");
       list.classList.add("modal_form_list");
@@ -67,7 +76,6 @@ const os = {
         if (!e.target.userinput.value) return;
 
         data.callback(e);
-
         ui_modal.close();
       });
       modal_content.append(p, form);
@@ -94,12 +102,12 @@ const os = {
       modal_actions__submit.type = "submit";
       modal_actions__submit.innerText = "Confirmer";
       modal_actions__submit.addEventListener("click", (e) => {
-        data.callback(e);
-
         ui_modal.close();
+        data.callback(e);
       });
       modal_actions.append(modal_actions__submit);
       modal_content.append(p, modal_actions);
+
       return modal_content;
     },
     appFooter(data) {

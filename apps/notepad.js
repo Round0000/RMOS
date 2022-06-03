@@ -1,10 +1,9 @@
-export var app = {
+export const app = {
   title: "Notepad",
   icon: "./assets/icons/apps/app_notepad.svg",
   content: `<textarea spellcheck="false"></textarea>`,
   functions: {
     initNewDocument(source) {
-      console.log(source)
       const textarea = source.querySelector("textarea");
       textarea.value = "";
       source.dataset.currentDocument = "";
@@ -21,16 +20,16 @@ export var app = {
         label: "Nouveau",
         callback(source) {
           if (source.dataset.saveState === "dirty") {
-            ui_modal.append(
-              os.components.modalAlert({
-                text: "Votre document actuel comporte des changements non enregistrés.\n Continuer tout de même ?",
-                callback(e) {
-                  app.functions.initNewDocument(source);
-                },
-              })
-            );
-            ui_modal.showModal();
-            ui_modal.querySelector(".btn_submit").focus();
+            const modal_content = os.components.modalAlert({
+              text: "Votre document actuel comporte des changements non enregistrés.\n Continuer tout de même ?",
+              callback(e) {
+                app.functions.initNewDocument(source);
+              },
+            });
+            const modal = os.components.modal({ content: modal_content });
+            ui_ground.append(modal);
+            modal.showModal();
+            modal.querySelector(".btn_submit").focus();
           } else {
             app.functions.initNewDocument(source);
           }
@@ -39,98 +38,103 @@ export var app = {
       {
         label: "Ouvrir",
         callback(source) {
-          if (source.dataset.saveState === "dirty") {
-            ui_modal.append(
-              os.components.modalAlert({
-                text: "Votre document actuel comporte des changements non enregistrés.\n Continuer tout de même ?",
-                callback(e) {
-                  app.functions.initNewDocument(source);
-                },
-              })
-            );
-            ui_modal.showModal();
-            ui_modal.querySelector(".btn_submit").focus();
-          } else {
-            app.functions.initNewDocument(source);
-          }
+          function initDocumentOpeningModal() {
+            if (localStorage.getItem("notepad")) {
+              let documents = [...JSON.parse(localStorage.getItem("notepad"))];
+              documents.forEach((doc) => {
+                doc.id = doc.createdAt;
+                doc.date =
+                  doc.createdAt.slice(6, 8) +
+                  "/" +
+                  doc.createdAt.slice(4, 6) +
+                  " " +
+                  doc.createdAt.slice(8, 10) +
+                  ":" +
+                  doc.createdAt.slice(10, 12);
+              });
+              const modalFormList = os.components.modalFormList({
+                source: source,
+                arr: documents,
+                labelText: "title",
+              });
 
-          if (localStorage.getItem("notepad")) {
-            let documents = [...JSON.parse(localStorage.getItem("notepad"))];
-            documents.forEach((doc) => {
-              doc.id = doc.createdAt;
-              doc.date =
-                doc.createdAt.slice(6, 8) +
-                "/" +
-                doc.createdAt.slice(4, 6) +
-                " " +
-                doc.createdAt.slice(8, 10) +
-                ":" +
-                doc.createdAt.slice(10, 12);
-            });
-            const modalFormList = os.components.modalFormList({
-              source: source,
-              arr: documents,
-              labelText: "title",
-            });
-
-            modalFormList.querySelectorAll("label").forEach((label) => {
-              const doc = documents.find(
-                (doc) => doc.id === label.getAttribute("for")
-              );
-              const dateEl = document.createElement("span");
-              dateEl.innerText = doc.date;
-              dateEl.dataset.hook = "date";
-              label.querySelector("span").dataset.hook = "title";
-              label.append(dateEl);
-            });
-
-            const data = {
-              formContent: modalFormList,
-              callback(e) {
-                const selected = documents.find(
-                  (doc) => doc.createdAt === e.target.userinput.value
+              modalFormList.querySelectorAll("label").forEach((label) => {
+                const doc = documents.find(
+                  (doc) => doc.id === label.getAttribute("for")
                 );
+                const dateEl = document.createElement("span");
+                dateEl.innerText = doc.date;
+                dateEl.dataset.hook = "date";
+                label.querySelector("span").dataset.hook = "title";
+                label.append(dateEl);
+              });
 
-                source.querySelector(".app_window__header_title").innerHTML = `
-                    Notepad <span>${selected.title}</span>
-                `;
-                const textarea = source.querySelector("textarea");
-                textarea.value = selected.content;
-                source.dataset.currentDocument = selected.createdAt;
+              const data = {
+                formContent: modalFormList,
+                callback(e) {
+                  const selected = documents.find(
+                    (doc) => doc.createdAt === e.target.userinput.value
+                  );
 
-                source.querySelector('[data-hook="chars-count"]').innerText =
-                  textarea.value.length;
+                  source.querySelector(
+                    ".app_window__header_title"
+                  ).innerHTML = `
+                      Notepad <span>${selected.title}</span>
+                  `;
+                  const textarea = source.querySelector("textarea");
+                  textarea.value = selected.content;
+                  source.dataset.currentDocument = selected.createdAt;
 
-                function updateWordsCount(str) {
-                  return str.replaceAll(" ", "").length === 0
-                    ? 0
-                    : str.trim().split(/\s+/).length;
-                }
-                source.querySelector('[data-hook="words-count"]').innerText =
-                  updateWordsCount(textarea.value);
-              },
-              text: "Sélectionnez le document à ouvrir.",
-            };
+                  source.querySelector('[data-hook="chars-count"]').innerText =
+                    textarea.value.length;
 
-            source.dataset.saveState = "clean";
+                  function updateWordsCount(str) {
+                    return str.replaceAll(" ", "").length === 0
+                      ? 0
+                      : str.trim().split(/\s+/).length;
+                  }
+                  source.querySelector('[data-hook="words-count"]').innerText =
+                    updateWordsCount(textarea.value);
+                },
+                text: "Sélectionnez le document à ouvrir.",
+              };
 
-            ui_modal.append(os.components.modalForm(data));
-            ui_modal.showModal();
-            ui_modal.querySelector(".btn_submit").focus();
-          } else {
-            ui_modal.innerHTML = `
-                  <div id="ui_modal__content">
-                    <p>Aucun document disponible.</p>
-                    <div class="modal_actions">
-                      <button class="btn_ok">OK</button>
+              source.dataset.saveState = "clean";
+
+              const modal_content = os.components.modalForm(data);
+              const modal = os.components.modal({ content: modal_content });
+              ui_ground.append(modal);
+              modal.showModal();
+              modal.querySelector(".btn_submit").focus();
+            } else {
+              const modal_content = document.createElement("div");
+              modal_content.innerHTML = `
+                    <div id="ui_modal__content">
+                      <p>Aucun document disponible.</p>
+                      <div class="modal_actions">
+                        <button class="btn_ok">OK</button>
+                      </div>
                     </div>
-                  </div>
-                `;
-            ui_modal.showModal();
-            ui_modal.querySelector(".btn_ok").addEventListener("click", () => {
-              ui_modal.close();
-              ui_modal.innerHTML = "";
+                  `;
+              const modal = os.components.modal({ content: modal_content });
+              ui_ground.append(modal);
+              modal.showModal();
+              modal.querySelector(".btn_ok").focus();
+            }
+          }
+          if (source.dataset.saveState === "dirty") {
+            const modal_content = os.components.modalAlert({
+              text: "Votre document actuel comporte des changements non enregistrés.\n Continuer tout de même ?",
+              callback(e) {
+                initDocumentOpeningModal();
+              },
             });
+            const modal = os.components.modal({ content: modal_content });
+            ui_ground.append(modal);
+            modal.showModal();
+            modal.querySelector(".btn_submit").focus();
+          } else {
+            initDocumentOpeningModal();
           }
         },
       },
