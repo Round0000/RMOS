@@ -169,7 +169,7 @@ img {
 }
 
 .app_window[data-state="minimized"] {
-  transform: translateX(-100%) scale(0);
+  transform: translateX(-100vw) scale(0);
   transform-origin: left;
   visibility: hidden;
 }
@@ -199,7 +199,7 @@ img {
 }
 
 .app_window__header_title {
-  font-weight: 500;
+  font-weight: 600;
   display: flex;
   flex: 1;
 }

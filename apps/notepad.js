@@ -29,7 +29,6 @@ export const app = {
             const modal = os.components.modal({ content: modal_content });
             ui_ground.append(modal);
             modal.showModal();
-            modal.querySelector(".btn_submit").focus();
           } else {
             app.functions.initNewDocument(source);
           }
@@ -105,7 +104,6 @@ export const app = {
               const modal = os.components.modal({ content: modal_content });
               ui_ground.append(modal);
               modal.showModal();
-              modal.querySelector(".btn_submit").focus();
             } else {
               const modal_content = document.createElement("div");
               modal_content.innerHTML = `
@@ -132,7 +130,6 @@ export const app = {
             const modal = os.components.modal({ content: modal_content });
             ui_ground.append(modal);
             modal.showModal();
-            modal.querySelector(".btn_submit").focus();
           } else {
             initDocumentOpeningModal();
           }
@@ -219,8 +216,10 @@ export const app = {
             text: "Sélectionnez la police d'écriture.",
           };
 
-          ui_modal.append(os.components.modalForm(data));
-          ui_modal.showModal();
+          const modal_content = os.components.modalForm(data);
+          const modal = os.components.modal({ content: modal_content });
+          ui_ground.append(modal);
+          modal.showModal();
         },
       },
       {
