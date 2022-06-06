@@ -117,6 +117,9 @@ export const app = {
               const modal = os.components.modal({ content: modal_content });
               ui_ground.append(modal);
               modal.showModal();
+              modal.querySelector("button").addEventListener("click", (e) => {
+                modal.close();
+              });
               modal.querySelector(".btn_ok").focus();
             }
           }
@@ -179,8 +182,11 @@ export const app = {
               text: "Donnez un titre à votre document.",
             };
 
-            ui_modal.append(os.components.modalForm(data));
-            ui_modal.showModal();
+            const modal_content = os.components.modalForm(data)
+
+            const modal = os.components.modal({ content: modal_content });
+            ui_ground.append(modal);
+            modal.showModal();
           }
         },
       },

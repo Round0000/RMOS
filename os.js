@@ -169,14 +169,18 @@ const os = {
     },
     updateClock() {
       const now = new Date();
-      ui_menu__clock_date.innerText = os.functions.getFormattedDate(
-        now,
-        "DD/MM"
-      );
-      ui_menu__clock_time.innerText = os.functions.getFormattedDate(
-        now,
-        "hh:mm"
-      );
+      ui_menu__clock_date.innerText
+
+      if (now.getSeconds() === 0 || ui_menu__clock_date.innerText[0] == ".") {
+        ui_menu__clock_date.innerText = os.functions.getFormattedDate(
+          now,
+          "DD/MM"
+        );
+        ui_menu__clock_time.innerText = os.functions.getFormattedDate(
+          now,
+          "hh:mm"
+        );
+      }
     },
   },
 };
