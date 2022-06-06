@@ -462,7 +462,6 @@ img {
   #ui_menu__clock {
     flex-direction: column;
     justify-content: center;
-    font-variant-numeric: tabular-nums;
   }
 
   .app_window[data-state="minimized"] {
