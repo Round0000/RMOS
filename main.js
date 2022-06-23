@@ -246,5 +246,5 @@ ui_ground.addEventListener("click", (e) => {
 // Viewport height
 document.body.style.height = window.visualViewport.height + "px";
 
-launchApp(ui_menu.querySelector("button:last-of-type"));
+// launchApp(ui_menu.querySelector("button:last-of-type"));
 //
