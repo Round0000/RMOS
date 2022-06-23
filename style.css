@@ -155,6 +155,14 @@ img {
   padding: 16px;
 }
 
+h1 {
+  margin: 20vh auto;
+  width: max-content;
+  font-size: 2rem;
+  color: #0004;
+  font-family: var(--font-sans-serif);
+}
+
 .app_window {
   min-width: 600px;
   min-height: 400px;
