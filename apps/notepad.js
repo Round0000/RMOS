@@ -1,7 +1,7 @@
 export const app = {
   title: "Notepad",
   icon: "./assets/icons/apps/app_notepad.svg",
-  content: `<textarea spellcheck="false"></textarea>`,
+  content: `<textarea spellcheck="false" placeholder="Bienvenue dans votre outil de prise de notes. Commencez à écrire dès à présent, ou commencez par sélectionner une police de caractères et taille qui vous convient."></textarea>`,
   functions: {
     initNewDocument(source) {
       const textarea = source.querySelector("textarea");
@@ -182,7 +182,7 @@ export const app = {
               text: "Donnez un titre à votre document.",
             };
 
-            const modal_content = os.components.modalForm(data)
+            const modal_content = os.components.modalForm(data);
 
             const modal = os.components.modal({ content: modal_content });
             ui_ground.append(modal);
