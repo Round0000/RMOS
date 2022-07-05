@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;500&family=Fira+Sans:wght@100;200;300;400&family=Lora:wght@400;600&family=Montserrat:wght@300;500&family=Roboto+Condensed:wght@300;400;700&family=Roboto+Slab:wght@200;400&display=swap');
-
 :root {
   --clr-blue: #1fb6ff;
   --clr-purple: #7e5bef;
@@ -176,11 +174,24 @@ h1 {
   transition: transform .4s ease, visibility .4s;
 }
 
+.fade-in-motion > * {
+  animation: fade-in forwards .4s;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  } to {
+    opacity: 1;
+  }
+}
+
 .app_window[data-state="minimized"] {
   transform: translateX(-100vw) scale(0);
   transform-origin: left;
   visibility: hidden;
 }
+
 
 .app_window[data-maximized="true"] {
   inset: 16px !important;

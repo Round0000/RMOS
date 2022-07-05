@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Walkman</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="./assets/styles/apps/walkman.css" />
+  </head>
+  <body>
+    <main>
+      <p class="uiel_current_playlist_title"><span>walkman</span></p>
+      <section class="uiel_core">
+        <figure class="uiel_cover_visual"></figure>
+        <p class="uiel_current_file"></p>
+        <div class="uiel_smallviz">
+          <p class="uiel_currentTrackTime">...</p>
+          <p class="uiel_totalTrackTime">...</p>
+          <canvas class="uiel_smallviz_canvas"></canvas>
+        </div>
+        <div class="uiel_progress"><div></div></div>
+        <input
+          type="range"
+          name=""
+          id=""
+          min="0"
+          max="20"
+          value="15"
+          class="uiel_volume"
+        />
+        <div class="uiel_buttons">
+          <button data-command="add" tabindex="-1">
+            <input
+              type="file"
+              multiple
+              name=""
+              accept="audio/*"
+              id="walkman_file_input"
+            />
+          </button>
+          <button data-command="prev"></button>
+          <button data-command="play"></button>
+          <button data-command="pause" class="hidden"></button>
+          <button data-command="next"></button>
+        </div>
+      </section>
+      <section class="uiel_secondary">
+        <p class="uiel_current_playlist_title"><span>Current playlist</span></p>
+        <ol class="uiel_current_playlist"></ol>
+      </section>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.min.js"></script>
+    <script>
+      const jsmediatags = window.jsmediatags;
+
+      let currentlyPlaying;
+
+      function getFormattedTime(time) {
+        function str_pad_left(string, pad, length) {
+          return (new Array(length + 1).join(pad) + string).slice(-length);
+        }
+        let minutes = Math.floor(time / 60);
+        let seconds = Math.floor(time - minutes * 60);
+        let formattedTime =
+          str_pad_left(minutes, "0", 2) + ":" + str_pad_left(seconds, "0", 2);
+        return formattedTime;
+      }
+
+      const walkman_ui = {
+        core: document.querySelector(".uiel_core"),
+        commandButtons: document.querySelectorAll(".uiel_buttons button"),
+        currentFileName: document.querySelector(".uiel_current_file"),
+        currentPlaylist: document.querySelector(".uiel_current_playlist"),
+        volumeRange: document.querySelector(".uiel_volume"),
+        cover: document.querySelector(".uiel_cover_visual"),
+        progressBar: document.querySelector(".uiel_progress div"),
+      };
+
+      const walkmanCommands = {
+        add() {
+          if (!this.files.length) return;
+
+          function createPlaylistItem(file) {
+            const newPlaylistItem = document.createElement("li");
+            const audioSource = document.createElement("audio");
+            const urlObj = URL.createObjectURL(file);
+            audioSource.addEventListener("load", () => {
+              URL.revokeObjectURL(urlObj);
+            });
+            audioSource.src = urlObj;
+            newPlaylistItem.append(audioSource);
+            newPlaylistItem.addEventListener("dblclick", (e) => {
+              walkmanCommands.play(newPlaylistItem);
+            });
+            audioSource.addEventListener("timeupdate", (e) => {
+              document.querySelector(".uiel_currentTrackTime").innerText =
+                getFormattedTime(e.srcElement.currentTime);
+
+              walkman_ui.progressBar.style.width = `${
+                (e.srcElement.currentTime / e.srcElement.duration) * 100
+              }%`;
+            });
+            audioSource.addEventListener("ended", (e) => {
+              if (e.target.parentElement.nextElementSibling) {
+                walkmanCommands.next(e.target.parentElement);
+              } else {
+                currentlyPlaying.style.backgroundColor = "";
+                currentlyPlaying = null;
+                walkman_ui.currentFileName.innerText = "...";
+                document
+                  .querySelector("[data-command='play']")
+                  .classList.remove("hidden");
+                document
+                  .querySelector("[data-command='pause']")
+                  .classList.add("hidden");
+                walkman_ui.progressBar.style.width = "";
+                document.querySelector(".uiel_currentTrackTime").innerText =
+                  "...";
+                document.querySelector(".uiel_totalTrackTime").innerText =
+                  "...";
+                walkman_ui.backgroundImage = "";
+              }
+            });
+
+            return newPlaylistItem;
+          }
+
+          console.log("FUNCTION CALLED : add");
+          const fileList = this.files;
+
+          for (i = 0; i < fileList.length; i++) {
+            const file = fileList[i];
+
+            let tagsObj = {};
+
+            const item = createPlaylistItem(file);
+
+            // Media tags
+            jsmediatags.read(file, {
+              onSuccess: function (tag) {
+                // Array buffer to base64
+                if (tag.tags.picture) {
+                  const data = tag.tags.picture.data || null;
+                  const format = tag.tags.picture.format;
+                  let base64String = "";
+                  for (let i = 0; i < data.length; i++) {
+                    base64String += String.fromCharCode(data[i]);
+                  }
+
+                  tagsObj.cover = `url(data:${format};base64,${window.btoa(
+                    base64String
+                  )})`;
+                }
+
+                tagsObj.artist = tag.tags.artist || "[unknown]";
+                tagsObj.title = tag.tags.title || "[unknown]";
+
+                item.dataset.tagsCover = tagsObj.cover;
+                item.dataset.tagsArtist = tagsObj.artist;
+                item.dataset.tagsTitle = tagsObj.title;
+
+                const artistEl = document.createElement("span");
+                artistEl.classList.add("track_artist");
+                artistEl.innerText = tagsObj.artist;
+                const titleEl = document.createElement("span");
+                titleEl.classList.add("track_title");
+                titleEl.innerText = tagsObj.title;
+                item.append(artistEl, " - ", titleEl);
+              },
+              onError: function (error) {
+                console.log(error);
+                const titleEl = document.createElement("span");
+                titleEl.classList.add("track_title");
+                titleEl.innerText = file.name;
+                item.append(titleEl);
+              },
+            });
+
+            walkman_ui.currentPlaylist.append(item);
+          }
+        },
+        prev(file) {
+          console.log("FUNCTION CALLED : prev");
+          if (!currentlyPlaying) return;
+
+          if (file.previousElementSibling) {
+            this.play(file.previousElementSibling);
+          }
+        },
+        next(file) {
+          console.log("FUNCTION CALLED : next");
+          if (!currentlyPlaying) return;
+
+          if (file.nextElementSibling) {
+            this.play(file.nextElementSibling);
+          }
+        },
+        play(file = walkman_ui.currentPlaylist.querySelector("li")) {
+          this.pause();
+          const audio = file.querySelector("audio");
+          walkman_ui.currentPlaylist.querySelectorAll("audio").forEach((el) => {
+            if (el.parentElement === file) return;
+
+            el.pause();
+            el.currentTime = 0;
+          });
+          walkman_ui.currentFileName.innerText = file.innerText;
+          walkman_ui.cover.style.backgroundImage =
+            file.dataset.tagsCover === "undefined"
+              ? ""
+              : file.dataset.tagsCover;
+
+          if (audio.currentTime === 0) {
+            initAudioViz(audio);
+          }
+          currentlyPlaying = file;
+          audio.play();
+
+          document
+            .querySelector("[data-command='play']")
+            .classList.toggle("hidden");
+          document
+            .querySelector("[data-command='pause']")
+            .classList.toggle("hidden");
+
+          document.querySelector(".uiel_totalTrackTime").innerText =
+            getFormattedTime(audio.duration);
+
+          file.style.backgroundColor = "#fff3";
+          console.log("FUNCTION CALLED : play");
+
+          //
+        },
+        pause() {
+          document
+            .querySelector("[data-command='play']")
+            .classList.remove("hidden");
+          document
+            .querySelector("[data-command='pause']")
+            .classList.add("hidden");
+
+          console.log("FUNCTION CALLED : pause");
+          walkman_ui.currentPlaylist.querySelectorAll("li").forEach((el) => {
+            el.querySelector("audio").pause();
+            el.style.backgroundColor = "";
+          });
+        },
+        changeVolume(value) {
+          walkman_ui.currentPlaylist
+            .querySelectorAll("audio")
+            .forEach((el) => (el.volume = value / 20));
+        },
+        jump(width, offset) {
+          const audio = currentlyPlaying.querySelector("audio");
+          audio.currentTime = audio.duration / (width / offset);
+        },
+      };
+
+      // Keyboard shortcuts
+      walkman_ui.core.addEventListener("keyup", (e) => {
+        if (e.key.toUpperCase() === "O") {
+          walkman_file_input.click();
+        } else if (
+          e.key.toUpperCase() === "P" &&
+          walkman_ui.currentPlaylist.querySelectorAll("li").length > 0
+        ) {
+          walkmanCommands.play();
+        }
+      });
+
+      walkman_file_input.addEventListener("change", walkmanCommands.add, false);
+
+      walkman_ui.commandButtons.forEach((btn) => {
+        if (btn.dataset.command === "add") return;
+
+        btn.addEventListener("click", (e) => {
+          walkmanCommands[btn.dataset.command](currentlyPlaying);
+        });
+      });
+
+      walkman_ui.volumeRange.addEventListener("change", (e) => {
+        walkmanCommands.changeVolume(e.target.value);
+      });
+
+      walkman_ui.progressBar.parentElement.addEventListener("click", (e) => {
+        const barWidth = window
+          .getComputedStyle(walkman_ui.progressBar.parentElement)
+          .width.split("px")[0];
+        walkmanCommands.jump(barWidth, e.offsetX);
+      });
+
+      // Audio Viz
+      const file = document.querySelector("[data-command='add'] input");
+      const canvas = document.querySelector("canvas");
+
+      function initAudioViz(audio) {
+        ///////// <CANVAS> INITIALIZATION //////////
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const ctx = canvas.getContext("2d");
+        ///////////////////////////////////////////
+
+        const context = new AudioContext(); // (Interface) Audio-processing graph
+        let src = context.createMediaElementSource(audio);
+        const analyser = context.createAnalyser(); // Create an analyser for the audio context
+
+        src.connect(analyser); // Connects the audio context source to the analyser
+        analyser.connect(context.destination); // End destination of an audio graph in a given context
+        // Sends sound to the speakers or headphones
+
+        /////////////// ANALYSER FFTSIZE ////////////////////////
+        // analyser.fftSize = 32;
+        // analyser.fftSize = 64;
+        // analyser.fftSize = 128;
+        // analyser.fftSize = 256;
+        // analyser.fftSize = 512;
+        // analyser.fftSize = 1024;
+        analyser.fftSize = 2048;
+        // analyser.fftSize = 4096;
+        // analyser.fftSize = 8192;
+        // analyser.fftSize = 16384;
+        // analyser.fftSize = 32768;
+
+        // (FFT) is an algorithm that samples a signal over a period of time
+        // and divides it into its frequency components (single sinusoidal oscillations).
+        // It separates the mixed signals and shows what frequency is a violent vibration.
+
+        // (FFTSize) represents the window size in samples that is used when performing a FFT
+
+        // Lower the size, the less bars (but wider in size)
+        ///////////////////////////////////////////////////////////
+
+        const bufferLength = analyser.frequencyBinCount; // (read-only property)
+        // Unsigned integer, half of fftSize (so in this case, bufferLength = 8192)
+        // Equates to number of data values you have to play with for the visualization
+
+        // The FFT size defines the number of bins used for dividing the window into equal strips, or bins.
+        // Hence, a bin is a spectrum sample, and defines the frequency resolution of the window.
+
+        const dataArray = new Uint8Array(bufferLength); // Converts to 8-bit unsigned integer array
+        // At this point dataArray is an array with length of bufferLength but no values
+        console.log("DATA-ARRAY: ", dataArray); // Check out this array of frequency values!
+
+        const WIDTH = canvas.width;
+        const HEIGHT = canvas.height;
+        console.log("WIDTH: ", WIDTH, "HEIGHT: ", HEIGHT);
+
+        const barWidth = (WIDTH / bufferLength) * 13;
+        console.log("BARWIDTH: ", barWidth);
+
+        console.log("TOTAL WIDTH: ", 117 * 10 + 118 * barWidth); // (total space between bars)+(total width of all bars)
+
+        let barHeight;
+        let x = 0;
+
+        function renderFrame() {
+          requestAnimationFrame(renderFrame); // Takes callback function to invoke before rendering
+
+          x = 0;
+
+          analyser.getByteFrequencyData(dataArray); // Copies the frequency data into dataArray
+          // Results in a normalized array of values between 0 and 255
+          // Before this step, dataArray's values are all zeros (but with length of 8192)
+
+          ctx.fillStyle = "rgba(0,0,0,0.2)"; // Clears canvas before rendering bars (black with opacity 0.2)
+          ctx.fillRect(0, 0, WIDTH, HEIGHT); // Fade effect, set opacity to 1 for sharper rendering of bars
+
+          let r, g, b;
+          let bars = 118; // Set total number of bars you want per frame
+
+          for (let i = 0; i < bars; i++) {
+            barHeight = dataArray[i] * 2.5;
+
+            if (dataArray[i] > 210) {
+              // pink
+              r = 0;
+              g = 255;
+              b = 0;
+            } else if (dataArray[i] > 200) {
+              // yellow
+              r = 0;
+              g = 225;
+              b = 0;
+            } else if (dataArray[i] > 190) {
+              // yellow/green
+              r = 0;
+              g = 195;
+              b = 0;
+            } else if (dataArray[i] > 180) {
+              // blue/green
+              r = 0;
+              g = 165;
+              b = 0;
+            } else {
+              // light blue
+              r = 0;
+              g = 135;
+              b = 0;
+            }
+
+            // if (i === 0){
+            //   console.log(dataArray[i])
+            // }
+
+            ctx.fillStyle = `rgb(${r},${g},${b})`;
+            ctx.fillRect(x, HEIGHT - barHeight, barWidth, barHeight);
+            // (x, y, i, j)
+            // (x, y) Represents start point
+            // (i, j) Represents end point
+
+            x += barWidth + 10; // Gives 10px space between each bar
+          }
+        }
+
+        // audio.play();
+        renderFrame();
+      }
+    </script>
+  </body>
+</html>

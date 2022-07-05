@@ -194,6 +194,10 @@ function launchApp(button) {
         os.appStack.push(id);
         os.activeApp = app.title;
         appWindow.dataset.state = "active";
+        appWindow.classList.add("fade-in-motion");
+        appWindow.addEventListener("animationend", (e) => {
+          appWindow.classList.remove("fade-in-motion");
+        });
         button.dataset.state = "active";
       });
     })

@@ -1,0 +1,380 @@
+.app_window[data-appid="walkman"] .app_window__main {
+    padding: 0;
+    overflow: hidden;
+    position: relative;
+    height: 100%;
+    flex: 1;
+}
+
+main {
+    background-color: white;
+    margin: auto;
+    border: 2px solid #222;
+    background: linear-gradient(to right, #151421 20%, #3a3b5b 60% 80%, #252539);
+    user-select: none;
+}
+
+.uiel_core {
+    display: grid;
+    grid-template-columns: auto auto 1fr;
+    grid-template-rows: 2em auto auto 1.5em;
+    gap: 6px;
+    padding: 6px;
+}
+
+.uiel_core>* {
+    box-shadow: inset 2px 2px 0px #444, inset -2px -2px 0px #aaa;
+}
+
+.uiel_progress {
+    display: block;
+    width: 100%;
+    box-shadow: none;
+    grid-column: 1 / -1;
+    grid-row: 4 / 5;
+    align-self: center;
+    height: 16px;
+    border-radius: 4px;
+    border: 1px solid #222;
+    background-color: #fff5;
+    position: relative;
+    overflow: hidden;
+    box-shadow: inset 1px 1px 3px #0005;
+}
+
+.uiel_progress div {
+    position: absolute;
+    inset: 0;
+    width: 0;
+    background: linear-gradient(to left, #fff 4px, #0ae509 0, #0ae50966);
+    box-shadow: inset 1px 1px 3px #0005;
+    pointer-events: none;
+}
+
+.uiel_buttons {
+    box-shadow: none;
+    display: flex;
+    height: 26px;
+    width: 200px;
+    gap: 4px;
+    grid-column: 2 / 4;
+    justify-self: end;
+}
+
+.uiel_buttons button {
+    flex: 1;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 16px;
+    border-radius: 2px;
+}
+
+[data-command="add"] {
+    background: url("../../../assets/icons/apps/walkman/command_add.svg");
+    position: relative;
+}
+
+[data-command="add"]:focus-within:not(:focus-visible) {
+    outline: 2px solid var(--clr-orange) !important;
+    outline-offset: -2px;
+}
+
+[data-command="add"] input {
+    all: unset;
+    position: absolute;
+    inset: -3px;
+    opacity: 0;
+}
+
+[data-command="prev"] {
+    background: url("../../../assets/icons/apps/walkman/command_prev.svg");
+}
+
+[data-command="play"] {
+    background: url("../../../assets/icons/apps/walkman/command_play.svg");
+}
+
+[data-command="pause"] {
+    background: url("../../../assets/icons/apps/walkman/command_pause.svg");
+}
+
+[data-command="next"] {
+    background: url("../../../assets/icons/apps/walkman/command_next.svg");
+}
+
+.uiel_core button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #ddd;
+    color: #444;
+    border-top: 3px solid #fff;
+    border-left: 3px solid #fff;
+    border-bottom: 3px solid #999;
+    border-right: 3px solid #999;
+    transition: background-color .2s;
+}
+
+.uiel_core button:active {
+    background-color: #eee;
+    border-bottom: 3px solid #fff;
+    border-right: 3px solid #fff;
+    border-top: 3px solid #999;
+    border-left: 3px solid #999;
+}
+
+.uiel_cover_visual {
+    grid-row: 1 / 4;
+    grid-column: 1 / 2;
+    background-color: #fff2;
+    background-image: url("../../../assets/icons/apps/walkman/nocover.svg");
+    background-size: cover;
+    background-position: center;
+    height: 180px;
+    width: 180px;
+    border-top: 3px solid #fff;
+    border-left: 3px solid #fff;
+    border-bottom: 3px solid #999;
+    border-right: 3px solid #999;
+}
+
+.uiel_cover_visual img {
+    object-fit: cover;
+    outline: 1px solid #fff;
+}
+
+.uiel_smallviz,
+.uiel_current_file,
+.uiel_current_playlist {
+    background-color: #000;
+    color: #0ae509;
+    font-size: var(--size-s);
+    padding: 6px 8px;
+}
+
+.uiel_smallviz {
+    grid-row: 2 / 4;
+    grid-column: 2 / -1;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    padding: 0;
+    position: relative;
+}
+
+.uiel_smallviz p {
+    position: absolute;
+    font-family: var(--font-mono);
+    color: #fffd;
+    text-shadow: 2px 2px 2px #000;
+    background-color: #0008;
+}
+
+.uiel_currentTrackTime {
+    top: 4px;
+    left: 8px;
+}
+
+.uiel_totalTrackTime {
+    top: 4px;
+    right: 8px;
+}
+
+.uiel_smallviz_canvas {
+    width: 292px;
+    height: 136px;
+    margin-bottom: 4px;
+}
+
+.uiel_current_file {
+    grid-column: 2 / 4;
+    grid-row: 1 / 2;
+    width: 300px;
+    height: 2em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.uiel_volume {
+    -webkit-appearance: none;
+    box-shadow: none;
+    grid-column: 1 / 2;
+    grid-row: 5 / 6;
+}
+
+.uiel_volume:focus {
+    outline: none;
+}
+
+.uiel_volume::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 10px;
+    cursor: pointer;
+    animate: 0.2s;
+    box-shadow: 1px 1px 1px #000000;
+    background: linear-gradient(to top, #d0151b, red, #d0151b);
+    border-radius: 4px;
+    border: 1px solid #000000;
+}
+
+.uiel_volume::-webkit-slider-thumb {
+    box-shadow: 1px 1px 1px #000000;
+    border: 1px solid #000000;
+    height: 17px;
+    width: 29px;
+    border-radius: 2px;
+    background: repeating-linear-gradient(to right, #222 0 50%, #ccc 50% 100%);
+    background-size: 29%;
+    background-position: 20%;
+    border-top: 3px solid #fff;
+    border-left: 3px solid #fff;
+    border-bottom: 3px solid #888;
+    border-right: 3px solid #888;
+    cursor: pointer;
+    -webkit-appearance: none;
+    margin-top: -4px;
+}
+
+
+
+.uiel_volume:focus::-webkit-slider-runnable-track {
+    background: linear-gradient(to top, #d0151b, red, #d0151b);
+}
+
+.uiel_volume::-moz-range-track {
+    width: 100%;
+    height: 10px;
+    cursor: pointer;
+    animate: 0.2s;
+    box-shadow: 1px 1px 1px #000000;
+    background: linear-gradient(to top, #d0151b, red, #d0151b);
+    border-radius: 4px;
+    border: 1px solid #000000;
+}
+
+.uiel_volume::-moz-range-thumb {
+    box-shadow: 1px 1px 1px #000000;
+    border: 1px solid #000000;
+    height: 18px;
+    width: 29px;
+    border-radius: 2px;
+    background: repeating-linear-gradient(to right, #222, transparent);
+    background-size: 4px;
+    cursor: pointer;
+}
+
+.uiel_volume::-ms-track {
+    width: 100%;
+    height: 10px;
+    cursor: pointer;
+    animate: 0.2s;
+    background: transparent;
+    border-color: transparent;
+    color: transparent;
+}
+
+.uiel_volume::-ms-fill-lower {
+    background: #3071A9;
+    border: 1px solid #000000;
+    border-radius: 10px;
+    box-shadow: 1px 1px 1px #000000;
+}
+
+.uiel_volume::-ms-fill-upper {
+    background: #3071A9;
+    border: 1px solid #000000;
+    border-radius: 10px;
+    box-shadow: 1px 1px 1px #000000;
+}
+
+.uiel_volume::-ms-thumb {
+    margin-top: 1px;
+    box-shadow: 1px 1px 1px #000000;
+    border: 1px solid #000000;
+    height: 18px;
+    width: 29px;
+    border-radius: 2px;
+    background: repeating-linear-gradient(to right, #222, transparent);
+    background-size: 4px;
+    cursor: pointer;
+}
+
+.uiel_volume:focus::-ms-fill-lower {
+    background: #3071A9;
+}
+
+.uiel_volume:focus::-ms-fill-upper {
+    background: #3071A9;
+}
+
+.uiel_volume::-webkit-slider-runnable-track,
+.uiel_volume::-moz-range-track,
+.uiel_volume::-webkit-slider-runnable-track {
+    background: white !important;
+}
+
+.uiel_current_playlist_title {
+    color: #eee;
+    padding: 6px 6px;
+    background-color: #111;
+    border-top: 2px solid #0005;
+    text-align: center;
+}
+
+.uiel_current_playlist_title span {
+    position: relative;
+    display: block;
+    display: flex;
+    align-items: center;
+    text-transform: uppercase;
+    font-size: .85em;
+}
+
+.uiel_current_playlist_title span::before {
+    content: '';
+    flex: 1;
+    margin-right: .5em;
+    background-color: #ebd4a1;
+    height: .6em;
+    border: 1px solid #000;
+    border-radius: 2px;
+    box-shadow: 0px 1px 0px #0009;
+}
+
+.uiel_current_playlist_title span::after {
+    content: '';
+    flex: 1;
+    background-color: #ebd4a1;
+    margin-left: .5em;
+    height: .6em;
+    border: 1px solid #000;
+    border-radius: 2px;
+    box-shadow: 0px 1px 0px #0009;
+}
+
+.uiel_current_playlist {
+    height: 30vh;
+    overflow-y: scroll;
+    width: 35em;
+    margin: auto;
+    padding: 4px;
+    margin-bottom: 4px;
+}
+
+.uiel_current_playlist li {
+    border: 1px solid #333;
+    background-color: #111;
+    padding: 2px 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.uiel_current_playlist .track_artist {
+    font-weight: bold;
+}
+
+.uiel_current_playlist .track_title {
+    font-style: italic;
+}
