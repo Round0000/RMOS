@@ -55,13 +55,14 @@ main {
     box-shadow: none;
     display: flex;
     height: 26px;
-    width: 200px;
+    width: 100%;
     gap: 4px;
     grid-column: 2 / 4;
     justify-self: end;
 }
 
-.uiel_buttons button {
+.uiel_buttons button,
+.uiel_buttons input {
     flex: 1;
     background-repeat: no-repeat;
     background-position: center;
@@ -86,6 +87,14 @@ main {
     opacity: 0;
 }
 
+[data-command="repeat"] {
+    background: url("../../../assets/icons/apps/walkman/command_repeat.svg");
+}
+
+[data-command="shuffle"] {
+    background: url("../../../assets/icons/apps/walkman/command_shuffle.svg");
+}
+
 [data-command="prev"] {
     background: url("../../../assets/icons/apps/walkman/command_prev.svg");
 }
@@ -94,15 +103,16 @@ main {
     background: url("../../../assets/icons/apps/walkman/command_play.svg");
 }
 
-[data-command="pause"] {
-    background: url("../../../assets/icons/apps/walkman/command_pause.svg");
+[data-command="halt"] {
+    background: url("../../../assets/icons/apps/walkman/command_halt.svg");
 }
 
 [data-command="next"] {
     background: url("../../../assets/icons/apps/walkman/command_next.svg");
 }
 
-.uiel_core button {
+.uiel_core button,
+.uiel_core input[type="checkbox"] {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -115,7 +125,8 @@ main {
     transition: background-color .2s;
 }
 
-.uiel_core button:active {
+.uiel_core button:active,
+.uiel_core input[type="checkbox"]:checked {
     background-color: #eee;
     border-bottom: 3px solid #fff;
     border-right: 3px solid #fff;
@@ -166,8 +177,7 @@ main {
     position: absolute;
     font-family: var(--font-mono);
     color: #fffd;
-    text-shadow: 2px 2px 2px #000;
-    background-color: #0008;
+    color: #0ae509;
 }
 
 .uiel_currentTrackTime {
@@ -182,7 +192,7 @@ main {
 
 .uiel_smallviz_canvas {
     width: 292px;
-    height: 136px;
+    height: 124px;
     margin-bottom: 4px;
 }
 
@@ -201,6 +211,9 @@ main {
     box-shadow: none;
     grid-column: 1 / 2;
     grid-row: 5 / 6;
+    padding: 0 8px;
+    background-color: #fff2;
+    border-radius: 2px;
 }
 
 .uiel_volume:focus {

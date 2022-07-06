@@ -39,9 +39,11 @@
               id="walkman_file_input"
             />
           </button>
+          <input type="checkbox" data-command="repeat" />
+          <input type="checkbox" data-command="shuffle" />
           <button data-command="prev"></button>
           <button data-command="play"></button>
-          <button data-command="pause" class="hidden"></button>
+          <button data-command="halt" class="hidden"></button>
           <button data-command="next"></button>
         </div>
       </section>
@@ -56,6 +58,8 @@
       const jsmediatags = window.jsmediatags;
 
       let currentlyPlaying;
+      let onRepeat = false;
+      let playlistOrder = [];
 
       function getFormattedTime(time) {
         function str_pad_left(string, pad, length) {
@@ -105,29 +109,31 @@
             audioSource.addEventListener("ended", (e) => {
               if (e.target.parentElement.nextElementSibling) {
                 walkmanCommands.next(e.target.parentElement);
-              } else {
+              } else if (!onRepeat) {
                 currentlyPlaying.style.backgroundColor = "";
                 currentlyPlaying = null;
                 walkman_ui.currentFileName.innerText = "...";
                 document
                   .querySelector("[data-command='play']")
                   .classList.remove("hidden");
+                // document.querySelector("[data-command='play']").focus();
                 document
-                  .querySelector("[data-command='pause']")
+                  .querySelector("[data-command='halt']")
                   .classList.add("hidden");
                 walkman_ui.progressBar.style.width = "";
                 document.querySelector(".uiel_currentTrackTime").innerText =
                   "...";
                 document.querySelector(".uiel_totalTrackTime").innerText =
                   "...";
-                walkman_ui.backgroundImage = "";
+                walkman_ui.cover.style.backgroundImage = "";
+              } else {
+                walkmanCommands.play();
               }
             });
 
             return newPlaylistItem;
           }
 
-          console.log("FUNCTION CALLED : add");
           const fileList = this.files;
 
           for (i = 0; i < fileList.length; i++) {
@@ -180,9 +186,10 @@
 
             walkman_ui.currentPlaylist.append(item);
           }
+
+          walkmanCommands.setOrder();
         },
         prev(file) {
-          console.log("FUNCTION CALLED : prev");
           if (!currentlyPlaying) return;
 
           if (file.previousElementSibling) {
@@ -190,15 +197,35 @@
           }
         },
         next(file) {
-          console.log("FUNCTION CALLED : next");
           if (!currentlyPlaying) return;
 
-          if (file.nextElementSibling) {
+          let order = parseInt(file.dataset.order);
+          console.log("currentOrder", order);
+
+          console.log(order, playlistOrder);
+          let next;
+          if (
+            walkman_ui.core.querySelector('[data-command="shuffle"]').checked &&
+            playlistOrder.find((num) => num === order + 1)
+          ) {
+            console.log(order + 1, "order found");
+            this.play(
+              walkman_ui.currentPlaylist.querySelector(
+                `[data-order="${order + 1}"]`
+              )
+            );
+          } else if (file.nextElementSibling) {
             this.play(file.nextElementSibling);
           }
         },
-        play(file = walkman_ui.currentPlaylist.querySelector("li")) {
-          this.pause();
+        play(file) {
+          if (!file) {
+            file = walkman_ui.currentPlaylist.querySelector("li");
+          }
+          //
+          console.log(file.dataset.order, file.innerText);
+          //
+          this.halt();
           const audio = file.querySelector("audio");
           walkman_ui.currentPlaylist.querySelectorAll("audio").forEach((el) => {
             if (el.parentElement === file) return;
@@ -212,36 +239,38 @@
               ? ""
               : file.dataset.tagsCover;
 
-          if (audio.currentTime === 0) {
+          if (audio.played.length === 0) {
             initAudioViz(audio);
           }
+
           currentlyPlaying = file;
+          file.scrollIntoView({ behavior: "smooth", block: "center" });
           audio.play();
 
           document
             .querySelector("[data-command='play']")
             .classList.toggle("hidden");
           document
-            .querySelector("[data-command='pause']")
+            .querySelector("[data-command='halt']")
             .classList.toggle("hidden");
 
           document.querySelector(".uiel_totalTrackTime").innerText =
             getFormattedTime(audio.duration);
 
           file.style.backgroundColor = "#fff3";
-          console.log("FUNCTION CALLED : play");
 
           //
         },
-        pause() {
+        halt() {
+          if (!currentlyPlaying) return;
+
           document
             .querySelector("[data-command='play']")
             .classList.remove("hidden");
           document
-            .querySelector("[data-command='pause']")
+            .querySelector("[data-command='halt']")
             .classList.add("hidden");
 
-          console.log("FUNCTION CALLED : pause");
           walkman_ui.currentPlaylist.querySelectorAll("li").forEach((el) => {
             el.querySelector("audio").pause();
             el.style.backgroundColor = "";
@@ -253,22 +282,35 @@
             .forEach((el) => (el.volume = value / 20));
         },
         jump(width, offset) {
+          if (!currentlyPlaying) return;
+
           const audio = currentlyPlaying.querySelector("audio");
           audio.currentTime = audio.duration / (width / offset);
         },
-      };
+        setOrder() {
+          console.log("FUNCTION CALLED : set order");
+          let list = walkman_ui.currentPlaylist.querySelectorAll("li");
+          let length = list.length;
+          playlistOrder = [];
+          for (i = 0; i < length; i++) {
+            playlistOrder.push(i);
+          }
 
-      // Keyboard shortcuts
-      walkman_ui.core.addEventListener("keyup", (e) => {
-        if (e.key.toUpperCase() === "O") {
-          walkman_file_input.click();
-        } else if (
-          e.key.toUpperCase() === "P" &&
-          walkman_ui.currentPlaylist.querySelectorAll("li").length > 0
-        ) {
-          walkmanCommands.play();
-        }
-      });
+          if (
+            walkman_ui.core.querySelector('[data-command="shuffle"]').checked
+          ) {
+            playlistOrder = playlistOrder.sort((a, b) => 0.5 - Math.random());
+          }
+
+          list.forEach((track, index) => {
+            track.dataset.order = playlistOrder[index];
+            console.log(track.dataset.order, track.innerText);
+          });
+
+          currentlyPlaying =
+            walkman_ui.currentPlaylist.querySelector(`[data-order="0"]`);
+        },
+      };
 
       walkman_file_input.addEventListener("change", walkmanCommands.add, false);
 
@@ -279,6 +321,24 @@
           walkmanCommands[btn.dataset.command](currentlyPlaying);
         });
       });
+
+      walkman_ui.core
+        .querySelector('[data-command="repeat"]')
+        .addEventListener("change", (e) => {
+          onRepeat = e.target.checked;
+        });
+
+      walkman_ui.core
+        .querySelector('[data-command="shuffle"]')
+        .addEventListener("change", (e) => {
+          walkmanCommands.setOrder();
+        });
+
+      // walkman_ui.core
+      //   .querySelector('[data-command="add"]')
+      //   .addEventListener("click", (e) => {
+      //     walkmanCommands.setOrder();
+      //   });
 
       walkman_ui.volumeRange.addEventListener("change", (e) => {
         walkmanCommands.changeVolume(e.target.value);
@@ -341,16 +401,16 @@
 
         const dataArray = new Uint8Array(bufferLength); // Converts to 8-bit unsigned integer array
         // At this point dataArray is an array with length of bufferLength but no values
-        console.log("DATA-ARRAY: ", dataArray); // Check out this array of frequency values!
+        // console.log("DATA-ARRAY: ", dataArray); // Check out this array of frequency values!
 
         const WIDTH = canvas.width;
         const HEIGHT = canvas.height;
-        console.log("WIDTH: ", WIDTH, "HEIGHT: ", HEIGHT);
+        // console.log("WIDTH: ", WIDTH, "HEIGHT: ", HEIGHT);
 
         const barWidth = (WIDTH / bufferLength) * 13;
-        console.log("BARWIDTH: ", barWidth);
+        // console.log("BARWIDTH: ", barWidth);
 
-        console.log("TOTAL WIDTH: ", 117 * 10 + 118 * barWidth); // (total space between bars)+(total width of all bars)
+        // console.log("TOTAL WIDTH: ", 117 * 10 + 118 * barWidth); // (total space between bars)+(total width of all bars)
 
         let barHeight;
         let x = 0;
