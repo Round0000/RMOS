@@ -59,6 +59,7 @@
 
       let currentlyPlaying;
       let onRepeat = false;
+      let shuffle = false;
       let playlistOrder = [];
 
       function getFormattedTime(time) {
@@ -136,6 +137,8 @@
 
           const fileList = this.files;
 
+          const newTracks = [];
+
           for (i = 0; i < fileList.length; i++) {
             const file = fileList[i];
 
@@ -184,10 +187,13 @@
               },
             });
 
-            walkman_ui.currentPlaylist.append(item);
+            newTracks.push(item);
           }
 
-          walkmanCommands.setOrder();
+          newTracks.forEach((item) => {
+            walkman_ui.currentPlaylist.append(item);
+          });
+          walkmanCommands.setOrder(shuffle);
         },
         prev(file) {
           if (!currentlyPlaying) return;
@@ -214,11 +220,7 @@
                 `[data-order="${order + 1}"]`
               )
             );
-          } else if (
-            !walkman_ui.core.querySelector('[data-command="shuffle"]')
-              .checked &&
-            file.nextElementSibling
-          ) {
+          } else if (!shuffle && file.nextElementSibling) {
             this.play(file.nextElementSibling);
           }
         },
@@ -300,9 +302,7 @@
             playlistOrder.push(i);
           }
 
-          if (
-            walkman_ui.core.querySelector('[data-command="shuffle"]').checked
-          ) {
+          if (shuffle) {
             playlistOrder = playlistOrder.sort((a, b) => 0.5 - Math.random());
           }
 
@@ -335,7 +335,8 @@
       walkman_ui.core
         .querySelector('[data-command="shuffle"]')
         .addEventListener("change", (e) => {
-          walkmanCommands.setOrder();
+          shuffle = e.target.checked;
+          walkmanCommands.setOrder(shuffle);
         });
 
       // walkman_ui.core
