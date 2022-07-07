@@ -85,7 +85,6 @@ main {
     position: absolute;
     inset: -3px;
     opacity: 0;
-    pointer-events: none;
 }
 
 [data-command="repeat"] {
