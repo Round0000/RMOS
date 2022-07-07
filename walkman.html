@@ -26,7 +26,7 @@
           id=""
           min="0"
           max="20"
-          value="1"
+          value="15"
           class="uiel_volume"
         />
         <div class="uiel_buttons">
@@ -81,74 +81,78 @@
         volumeRange: document.querySelector(".uiel_volume"),
         cover: document.querySelector(".uiel_cover_visual"),
         progressBar: document.querySelector(".uiel_progress div"),
+        secondarySection: document.querySelector(".uiel_secondary"),
       };
 
       const walkmanCommands = {
+        createPlaylistItem(file) {
+          const newPlaylistItem = document.createElement("li");
+          const audioSource = document.createElement("audio");
+          const urlObj = URL.createObjectURL(file);
+          audioSource.addEventListener("load", () => {
+            URL.revokeObjectURL(urlObj);
+          });
+          audioSource.src = urlObj;
+          newPlaylistItem.append(audioSource);
+          newPlaylistItem.addEventListener("dblclick", (e) => {
+            walkmanCommands.play(newPlaylistItem);
+          });
+          audioSource.volume = walkman_ui.volumeRange.value / 20;
+          audioSource.addEventListener("timeupdate", (e) => {
+            document.querySelector(".uiel_currentTrackTime").innerText =
+              getFormattedTime(e.srcElement.currentTime);
+
+            walkman_ui.progressBar.style.width = `${
+              (e.srcElement.currentTime / e.srcElement.duration) * 100
+            }%`;
+          });
+          audioSource.addEventListener("ended", (e) => {
+            if (e.target.parentElement.nextElementSibling) {
+              walkmanCommands.next(e.target.parentElement);
+            } else if (!onRepeat) {
+              currentlyPlaying.style.backgroundColor = "";
+              currentlyPlaying = null;
+              walkman_ui.currentFileName.innerText = "...";
+              document
+                .querySelector("[data-command='play']")
+                .classList.remove("hidden");
+              document
+                .querySelector("[data-command='halt']")
+                .classList.add("hidden");
+              walkman_ui.progressBar.style.width = "";
+              document.querySelector(".uiel_currentTrackTime").innerText =
+                "...";
+              document.querySelector(".uiel_totalTrackTime").innerText = "...";
+              walkman_ui.cover.style.backgroundImage = "";
+            } else {
+              walkmanCommands.play();
+            }
+          });
+
+          return newPlaylistItem;
+        },
         add() {
           if (!this.files.length) return;
 
-          function createPlaylistItem(file) {
-            const newPlaylistItem = document.createElement("li");
-            const audioSource = document.createElement("audio");
-            const urlObj = URL.createObjectURL(file);
-            audioSource.addEventListener("load", () => {
-              URL.revokeObjectURL(urlObj);
-            });
-            audioSource.src = urlObj;
-            newPlaylistItem.append(audioSource);
-            newPlaylistItem.addEventListener("dblclick", (e) => {
-              walkmanCommands.play(newPlaylistItem);
-            });
-            audioSource.volume = walkman_ui.volumeRange.value / 20;
-            audioSource.addEventListener("timeupdate", (e) => {
-              document.querySelector(".uiel_currentTrackTime").innerText =
-                getFormattedTime(e.srcElement.currentTime);
-
-              walkman_ui.progressBar.style.width = `${
-                (e.srcElement.currentTime / e.srcElement.duration) * 100
-              }%`;
-            });
-            audioSource.addEventListener("ended", (e) => {
-              if (e.target.parentElement.nextElementSibling) {
-                walkmanCommands.next(e.target.parentElement);
-              } else if (!onRepeat) {
-                currentlyPlaying.style.backgroundColor = "";
-                currentlyPlaying = null;
-                walkman_ui.currentFileName.innerText = "...";
-                document
-                  .querySelector("[data-command='play']")
-                  .classList.remove("hidden");
-                document
-                  .querySelector("[data-command='halt']")
-                  .classList.add("hidden");
-                walkman_ui.progressBar.style.width = "";
-                document.querySelector(".uiel_currentTrackTime").innerText =
-                  "...";
-                document.querySelector(".uiel_totalTrackTime").innerText =
-                  "...";
-                walkman_ui.cover.style.backgroundImage = "";
-              } else {
-                walkmanCommands.play();
-              }
-            });
-
-            return newPlaylistItem;
-          }
-
           const fileList = this.files;
-          const newTracks = [];
+
+          if (fileList.length > 30) {
+            console.log("too many files");
+            return;
+          }
+          walkman_ui.secondarySection.classList.add("loading_playlist");
+
+          const tracks = [];
+
+          console.log(fileList.length);
 
           for (i = 0; i < fileList.length; i++) {
             const file = fileList[i];
 
-            let tagsObj = {};
-
-            const item = createPlaylistItem(file);
-
-            // Media tags
             jsmediatags.read(file, {
               onSuccess: function (tag) {
-                // Array buffer to base64
+                let tagsObj = {};
+
                 if (tag.tags.picture) {
                   const data = tag.tags.picture.data || null;
                   const format = tag.tags.picture.format;
@@ -165,6 +169,7 @@
                 tagsObj.artist = tag.tags.artist || "[unknown]";
                 tagsObj.title = tag.tags.title || "[unknown]";
 
+                const item = walkmanCommands.createPlaylistItem(file);
                 item.dataset.tagsCover = tagsObj.cover;
                 item.dataset.tagsArtist = tagsObj.artist;
                 item.dataset.tagsTitle = tagsObj.title;
@@ -175,28 +180,56 @@
                 const titleEl = document.createElement("span");
                 titleEl.classList.add("track_title");
                 titleEl.innerText = tagsObj.title;
-                item.append(artistEl, " - ", titleEl);
 
-                newTracks.push(item);
+                const btnToRemove = document.createElement("button");
+                btnToRemove.innerText = "x";
+                btnToRemove.classList.add("uiel_remove_playlist_item");
+                btnToRemove.addEventListener("click", (e) => {
+                  item.remove();
+                  walkmanCommands.setOrder(onShuffle);
+                });
+
+                item.append(artistEl, " - ", titleEl, btnToRemove);
+
+                tracks.push(item);
+                if (tracks.length === fileList.length) {
+                  tracks.forEach((track) =>
+                    walkman_ui.currentPlaylist.append(track)
+                  );
+                  walkmanCommands.setOrder(onShuffle);
+                  walkman_ui.secondarySection.classList.remove(
+                    "loading_playlist"
+                  );
+                  walkman_ui.core
+                    .querySelector('[data-command="play"]')
+                    .focus();
+                }
               },
               onError: function (error) {
-                console.log(error);
                 const titleEl = document.createElement("span");
                 titleEl.classList.add("track_title");
                 titleEl.innerText = file.name;
+                const item = walkmanCommands.createPlaylistItem(file);
                 item.append(titleEl);
 
-                newTracks.push(item);
-
+                tracks.push(item);
+                if (tracks.length === fileList.length) {
+                  tracks.forEach((track) =>
+                    walkman_ui.currentPlaylist.append(track)
+                  );
+                  walkmanCommands.setOrder(onShuffle);
+                  walkman_ui.secondarySection.classList.remove(
+                    "loading_playlist"
+                  );
+                  walkman_ui.core
+                    .querySelector('[data-command="play"]')
+                    .focus();
+                }
               },
             });
-          }
 
-          newTracks.forEach((track) => {
-            walkman_ui.currentPlaylist.append(track);
-          });
-          console.log(newTracks)
-          walkmanCommands.setOrder(onShuffle);
+            //
+          }
         },
         prev(file) {
           if (!currentlyPlaying) return;
@@ -210,22 +243,16 @@
           if (!currentlyPlaying) return;
 
           let currentIndex = walkmanPlaylist.indexOf(file);
-          console.log(currentIndex, walkmanPlaylist.length);
 
           if (currentIndex + 1 === walkmanPlaylist.length) {
-            if (onShuffle) {
+            if (onShuffle || onRepeat) {
               this.play(walkmanPlaylist[0]);
             }
           } else {
             this.play(walkmanPlaylist[currentIndex + 1]);
           }
         },
-        play(file) {
-          if (!file) {
-            file = walkman_ui.currentPlaylist.querySelector("li");
-          }
-
-          //
+        play(file = walkmanPlaylist[0]) {
           this.halt(file);
           const audio = file.querySelector("audio");
           walkman_ui.currentPlaylist.querySelectorAll("audio").forEach((el) => {
@@ -245,7 +272,7 @@
           }
 
           currentlyPlaying = file;
-          file.scrollIntoView({ behavior: "smooth", block: "center" });
+
           audio.play();
 
           document
@@ -254,11 +281,17 @@
           document
             .querySelector("[data-command='halt']")
             .classList.toggle("hidden");
+          walkman_ui.core.querySelector('[data-command="halt"]').focus();
 
           document.querySelector(".uiel_totalTrackTime").innerText =
             getFormattedTime(audio.duration);
 
           file.style.backgroundColor = "#fff3";
+
+          currentlyPlaying.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
 
           //
         },
@@ -271,6 +304,7 @@
           document
             .querySelector("[data-command='halt']")
             .classList.add("hidden");
+          walkman_ui.core.querySelector('[data-command="play"]').focus();
 
           walkman_ui.currentPlaylist.querySelectorAll("li").forEach((el) => {
             el.style.backgroundColor = "";
@@ -302,10 +336,18 @@
               (a, b) => 0.5 - Math.random()
             );
           }
+
+          for (i = 0; i < walkmanPlaylist.length; i++) {
+            walkmanPlaylist[i].dataset.order = i + 1;
+          }
         },
       };
 
       walkman_file_input.addEventListener("change", walkmanCommands.add, false);
+
+      walkman_file_input.addEventListener("mouseover", (e) => {
+        console.log(e);
+      });
 
       walkman_ui.commandButtons.forEach((btn) => {
         if (btn.dataset.command === "add") return;
@@ -327,12 +369,6 @@
           onShuffle = e.target.checked;
           walkmanCommands.setOrder(onShuffle);
         });
-
-      // walkman_ui.core
-      //   .querySelector('[data-command="add"]')
-      //   .addEventListener("click", (e) => {
-      //     walkmanCommands.setOrder();
-      //   });
 
       walkman_ui.volumeRange.addEventListener("change", (e) => {
         walkmanCommands.changeVolume(e.target.value);

@@ -85,6 +85,7 @@ main {
     position: absolute;
     inset: -3px;
     opacity: 0;
+    pointer-events: none;
 }
 
 [data-command="repeat"] {
@@ -373,6 +374,33 @@ main {
     margin: auto;
     padding: 4px;
     margin-bottom: 4px;
+    position: relative;
+    outline: 1px solid #000;
+    outline-offset: -1px;
+}
+
+.uiel_secondary {
+    position: relative;
+}
+
+.uiel_secondary::before {
+    position: absolute;
+    content: url(../../icons/apps/walkman/loader.svg);
+    inset: 0;
+    display: flex; justify-content: center; align-items: center;
+    background-color: #0009;
+    background-repeat: no-repeat;
+    background-position: center;
+    user-select: none;
+    visibility: hidden;
+    opacity: 0;
+    transition: .5s;
+    z-index: 1;
+}
+
+.uiel_secondary.loading_playlist::before {
+    visibility: visible;
+    opacity: 1;
 }
 
 .uiel_current_playlist li {
@@ -382,6 +410,14 @@ main {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    position: relative;
+}
+
+.uiel_current_playlist li::before {
+    display: inline-block;
+    content: attr(data-order) ".";
+    font-family: var(--font-mono);
+    width: 2em;
 }
 
 .uiel_current_playlist .track_artist {
@@ -389,5 +425,46 @@ main {
 }
 
 .uiel_current_playlist .track_title {
+    display: inline-block;
     font-style: italic;
+}
+
+.uiel_remove_playlist_item {
+    width: 1.5em;
+    background-color: #0005;
+    border-left: 1px solid #0009;
+    display: inline-flex; justify-content: center; align-items: center;
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
+/* Media query */
+@media (max-width: 500px) {
+    main {
+        width: 100%;
+        margin: 0;
+    }
+
+    .uiel_core {
+        display: flex;
+        flex-direction: column;
+        /* grid-template-columns: 1fr; */
+        /* grid-template-rows: 2em auto auto 1.5em; */
+        gap: 6px;
+        padding: 6px;
+    }
+
+    .uiel_core > * {
+        grid-column: 1;
+    }
+
+    .uiel_current_file {
+        width: 100%;
+    }
+
+    .uiel_cover_visual {
+        margin: auto;
+    }
 }
