@@ -386,7 +386,9 @@ main {
     position: absolute;
     content: url(../../icons/apps/walkman/loader.svg);
     inset: 0;
-    display: flex; justify-content: center; align-items: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background-color: #0009;
     background-repeat: no-repeat;
     background-position: center;
@@ -432,7 +434,9 @@ main {
     width: 1.5em;
     background-color: #0005;
     border-left: 1px solid #0009;
-    display: inline-flex; justify-content: center; align-items: center;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
     position: absolute;
     right: 0;
     top: 0;
@@ -443,32 +447,70 @@ main {
 @media (max-width: 500px) {
     main {
         width: 100%;
-        max-width: 100vw;
         margin: 0;
+        display: flex;
+        flex-direction: column;
     }
 
     .uiel_core {
-        display: flex;
-        flex-direction: column;
-        /* grid-template-columns: 1fr; */
-        /* grid-template-rows: 2em auto auto 1.5em; */
-        gap: 6px;
-        padding: 6px;
+        display: grid;
+        grid-template-columns: auto 1fr;
+        grid-template-rows: auto auto auto auto auto 1fr;
+        gap: 8px;
     }
 
-    .uiel_core > * {
-        grid-column: 1;
+    .uiel_core>* {
+        /* grid-column: 1; */
     }
 
     .uiel_current_file {
-        width: 100%;
+        grid-column: 1 / -1;
+        grid-row: 1;
+        width: auto;
     }
 
     .uiel_cover_visual {
-        margin: auto;
+        grid-column: 1;
+        grid-row: 2;
+        width: 30vw;
+        height: 30vw;
+    }
+
+    .uiel_smallviz {
+        grid-column: 2 / 3;
+        grid-row: 2;
+        height: 30vw;
+    }
+
+    .uiel_smallviz canvas {
+        width: 94%;
+        height: 80%;
+    }
+
+    .uiel_buttons {
+        grid-column: 1 / -1;
+        height: 32px;
+        gap: 8px;
+    }
+
+    .uiel_progress {
+        grid-column: 1 / -1;
+        grid-row: 3;
+        margin: 16px 0;
+    }
+    
+    .uiel_volume {
+        grid-column: 1 / -1;
+        margin: 16px 0;
+        padding: 8px;
     }
 
     .uiel_current_playlist {
         width: auto;
+    }
+
+    /* Temporary - to delete */
+    body {
+        flex-direction: column;
     }
 }
