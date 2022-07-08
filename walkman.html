@@ -210,7 +210,16 @@
                 titleEl.classList.add("track_title");
                 titleEl.innerText = file.name;
                 const item = walkmanCommands.createPlaylistItem(file);
-                item.append(titleEl);
+
+                const btnToRemove = document.createElement("button");
+                btnToRemove.innerText = "x";
+                btnToRemove.classList.add("uiel_remove_playlist_item");
+                btnToRemove.addEventListener("click", (e) => {
+                  item.remove();
+                  walkmanCommands.setOrder(onShuffle);
+                });
+
+                item.append(titleEl, btnToRemove);
 
                 tracks.push(item);
                 if (tracks.length === fileList.length) {
@@ -288,10 +297,11 @@
 
           file.style.backgroundColor = "#fff3";
 
-          currentlyPlaying.scrollIntoView({
-            behavior: "smooth",
-            block: "center",
-          });
+          // Scroll into view
+          // currentlyPlaying.scrollIntoView({
+          //   behavior: "smooth",
+          //   block: "center",
+          // });
 
           //
         },
@@ -344,10 +354,6 @@
       };
 
       walkman_file_input.addEventListener("change", walkmanCommands.add, false);
-
-      walkman_file_input.addEventListener("mouseover", (e) => {
-        console.log(e);
-      });
 
       walkman_ui.commandButtons.forEach((btn) => {
         if (btn.dataset.command === "add") return;

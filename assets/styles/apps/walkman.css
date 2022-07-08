@@ -143,10 +143,10 @@ main {
     background-position: center;
     height: 180px;
     width: 180px;
-    border-top: 3px solid #fff;
-    border-left: 3px solid #fff;
-    border-bottom: 3px solid #999;
-    border-right: 3px solid #999;
+    border-top: 2px solid #fff;
+    border-left: 2px solid #fff;
+    border-bottom: 2px solid #999;
+    border-right: 2px solid #999;
 }
 
 .uiel_cover_visual img {
@@ -197,6 +197,7 @@ main {
 }
 
 .uiel_current_file {
+    display: block;
     grid-column: 2 / 4;
     grid-row: 1 / 2;
     width: 300px;
@@ -211,8 +212,9 @@ main {
     box-shadow: none;
     grid-column: 1 / 2;
     grid-row: 5 / 6;
-    padding: 0 8px;
-    background-color: #fff2;
+    padding: 4px 8px;
+    background-color: #fff1;
+    box-shadow: inset 1px 1px 2px #0005;
     border-radius: 2px;
 }
 
@@ -380,6 +382,9 @@ main {
 
 .uiel_secondary {
     position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
 }
 
 .uiel_secondary::before {
@@ -447,16 +452,24 @@ main {
 @media (max-width: 500px) {
     main {
         width: 100%;
+        height: 100%;
         margin: 0;
         display: flex;
         flex-direction: column;
+        overflow: hidden;
+        border: none;
     }
 
     .uiel_core {
         display: grid;
         grid-template-columns: auto 1fr;
-        grid-template-rows: auto auto auto auto auto 1fr;
+        grid-template-rows: auto auto auto auto 1fr;
         gap: 8px;
+    }
+
+    .uiel_secondary {
+        flex: 1;
+        overflow-y: scroll;
     }
 
     .uiel_core>* {
@@ -491,22 +504,33 @@ main {
         grid-column: 1 / -1;
         height: 32px;
         gap: 8px;
+        margin: 8px 0;
     }
 
     .uiel_progress {
         grid-column: 1 / -1;
         grid-row: 3;
-        margin: 16px 0;
     }
-    
+
     .uiel_volume {
         grid-column: 1 / -1;
         margin: 16px 0;
-        padding: 8px;
+        padding: 16px;
     }
 
     .uiel_current_playlist {
-        width: auto;
+        flex: 1;
+        max-width: 100%;
+        padding-bottom: 5em;
+    }
+
+    .uiel_current_playlist li,
+    .uiel_current_file {
+        padding: 6px 8px;
+    }
+
+    .uiel_remove_playlist_item {
+        width: 3em;
     }
 
     /* Temporary - to delete */
