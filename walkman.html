@@ -244,7 +244,6 @@
           if (!currentlyPlaying) return;
 
           let currentIndex = walkmanPlaylist.indexOf(file);
-          console.log(currentIndex);
 
           this.play(walkmanPlaylist[currentIndex - 1]);
         },
@@ -333,7 +332,6 @@
           audio.currentTime = audio.duration / (width / offset);
         },
         setOrder() {
-          console.log("FUNCTION CALLED : set order");
           let list = walkman_ui.currentPlaylist.querySelectorAll("li");
           let length = list.length;
 
