@@ -128,6 +128,10 @@
             e.preventDefault();
 
             const droppedTrackId = e.dataTransfer.getData("text/plain");
+            if (!droppedTrackId) {
+              newPlaylistItem.classList.remove("drop-zone--over");
+              return;
+            }
             const droppedTrack = document.getElementById(droppedTrackId);
 
             walkman_ui.currentPlaylist.insertBefore(
@@ -175,10 +179,10 @@
 
           return newPlaylistItem;
         },
-        add() {
-          if (!this.files.length) return;
+        add(files) {
+          const fileList = this.files || files;
 
-          const fileList = this.files;
+          if (!fileList.length) return;
 
           if (fileList.length > 30) {
             console.log("too many files");
@@ -233,7 +237,12 @@
                 const track_title_separator = document.createElement("span");
                 track_title_separator.innerText = " - ";
 
-                item.append(artistEl, track_title_separator, titleEl, btnToRemove);
+                item.append(
+                  artistEl,
+                  track_title_separator,
+                  titleEl,
+                  btnToRemove
+                );
 
                 tracks.push(item);
                 if (tracks.length === fileList.length) {
@@ -427,6 +436,14 @@
           .getComputedStyle(walkman_ui.progressBar.parentElement)
           .width.split("px")[0];
         walkmanCommands.jump(barWidth, e.offsetX);
+      });
+
+      walkman_ui.currentPlaylist.addEventListener("dragover", (e) => {
+        e.preventDefault();
+      });
+      walkman_ui.currentPlaylist.addEventListener("drop", (e) => {
+        e.preventDefault();
+        walkmanCommands.add(e.dataTransfer.files);
       });
 
       // Audio Viz
