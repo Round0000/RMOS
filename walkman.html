@@ -53,7 +53,7 @@
       </section>
     </main>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.min.js"></script>
+    <script src="./assets/scripts/jsmediatags.min.js"></script>
     <script>
       const jsmediatags = window.jsmediatags;
 
@@ -94,9 +94,53 @@
           });
           audioSource.src = urlObj;
           newPlaylistItem.append(audioSource);
+          newPlaylistItem.draggable = true;
           newPlaylistItem.addEventListener("dblclick", (e) => {
             walkmanCommands.play(newPlaylistItem);
           });
+
+          //
+
+          const slugify = (str) =>
+            str
+              .toLowerCase()
+              .trim()
+              .replace(/[^\w\s-]/g, "")
+              .replace(/[\s_-]+/g, "-")
+              .replace(/^-+|-+$/g, "");
+
+          newPlaylistItem.id = slugify(file.name + "-" + file.size);
+          // Drag'n'drop
+          newPlaylistItem.addEventListener("dragstart", (e) => {
+            e.dataTransfer.setData("text/plain", newPlaylistItem.id);
+          });
+
+          newPlaylistItem.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            e.target.closest("li").classList.add("drop-zone--over");
+          });
+          newPlaylistItem.addEventListener("dragleave", (e) => {
+            e.preventDefault();
+            e.target.closest("li").classList.remove("drop-zone--over");
+          });
+
+          newPlaylistItem.addEventListener("drop", (e) => {
+            e.preventDefault();
+
+            const droppedTrackId = e.dataTransfer.getData("text/plain");
+            const droppedTrack = document.getElementById(droppedTrackId);
+
+            walkman_ui.currentPlaylist.insertBefore(
+              droppedTrack,
+              newPlaylistItem
+            );
+
+            newPlaylistItem.classList.remove("drop-zone--over");
+
+            walkmanCommands.setOrder(onShuffle);
+          });
+
+          //
           audioSource.volume = walkman_ui.volumeRange.value / 20;
           audioSource.addEventListener("timeupdate", (e) => {
             document.querySelector(".uiel_currentTrackTime").innerText =
@@ -144,8 +188,6 @@
 
           const tracks = [];
 
-          console.log(fileList.length);
-
           for (i = 0; i < fileList.length; i++) {
             const file = fileList[i];
 
@@ -182,14 +224,16 @@
                 titleEl.innerText = tagsObj.title;
 
                 const btnToRemove = document.createElement("button");
-                btnToRemove.innerText = "x";
                 btnToRemove.classList.add("uiel_remove_playlist_item");
                 btnToRemove.addEventListener("click", (e) => {
                   item.remove();
                   walkmanCommands.setOrder(onShuffle);
                 });
 
-                item.append(artistEl, " - ", titleEl, btnToRemove);
+                const track_title_separator = document.createElement("span");
+                track_title_separator.innerText = " - ";
+
+                item.append(artistEl, track_title_separator, titleEl, btnToRemove);
 
                 tracks.push(item);
                 if (tracks.length === fileList.length) {
@@ -269,7 +313,7 @@
             el.pause();
             el.currentTime = 0;
           });
-          walkman_ui.currentFileName.innerText = file.innerText;
+          walkman_ui.currentFileName.innerText = file.textContent;
           walkman_ui.cover.style.backgroundImage =
             file.dataset.tagsCover === "undefined"
               ? ""

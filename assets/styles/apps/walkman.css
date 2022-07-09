@@ -385,6 +385,7 @@ main {
     display: flex;
     flex-direction: column;
     justify-content: stretch;
+    min-width: 25em;
 }
 
 .uiel_secondary::before {
@@ -412,18 +413,35 @@ main {
 .uiel_current_playlist li {
     border: 1px solid #333;
     background-color: #111;
-    padding: 2px 4px;
+    padding: 0 !important;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     position: relative;
+    display: flex;
+}
+
+.uiel_current_playlist li:hover {
+    color: dodgerblue;
+    color: #eee;
+    border-color: #555;
+}
+
+.uiel_current_playlist li:hover button  {
+    background-color: #000;
 }
 
 .uiel_current_playlist li::before {
     display: inline-block;
     content: attr(data-order) ".";
     font-family: var(--font-mono);
-    width: 2em;
+    width: 1.5em;
+    flex-shrink: 0;
+    margin: 2px 4px;
+}
+
+.uiel_current_playlist li span {
+    margin: 2px 4px;
 }
 
 .uiel_current_playlist .track_artist {
@@ -433,19 +451,33 @@ main {
 .uiel_current_playlist .track_title {
     display: inline-block;
     font-style: italic;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .uiel_remove_playlist_item {
-    width: 1.5em;
+    width: 32px;
     background-color: #0005;
+    background-image: url(../../icons/apps/walkman/remove_track.svg);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 16px;
     border-left: 1px solid #0009;
+    color: #eee;
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    position: absolute;
-    right: 0;
-    top: 0;
-    bottom: 0;
+    flex-shrink: 0;
+    margin-left: 1em;
+    align-self: stretch;
+}
+
+.drop-zone--over {
+    transition: all .2s;
+    opacity: .3;
+    color: #fff;
 }
 
 /* Media query */
@@ -470,10 +502,6 @@ main {
     .uiel_secondary {
         flex: 1;
         overflow-y: scroll;
-    }
-
-    .uiel_core>* {
-        /* grid-column: 1; */
     }
 
     .uiel_current_file {
@@ -514,7 +542,7 @@ main {
 
     .uiel_volume {
         grid-column: 1 / -1;
-        margin: 16px 0;
+        margin: 8px 0 16px;
         padding: 16px;
     }
 
@@ -524,17 +552,12 @@ main {
         padding-bottom: 5em;
     }
 
-    .uiel_current_playlist li,
-    .uiel_current_file {
-        padding: 6px 8px;
+    .uiel_current_playlist li span {
+        margin: 8px 4px;
     }
 
-    .uiel_remove_playlist_item {
-        width: 3em;
+    .uiel_current_playlist li::before {
+        margin: 8px;
     }
 
-    /* Temporary - to delete */
-    body {
-        flex-direction: column;
-    }
 }
