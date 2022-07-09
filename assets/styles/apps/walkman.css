@@ -329,7 +329,8 @@ main {
     background: white !important;
 }
 
-.uiel_current_playlist_title {
+.uiel_current_playlist_title,
+.uiel_walkman_title {
     color: #eee;
     padding: 6px 6px;
     background-color: #111;
@@ -337,7 +338,8 @@ main {
     text-align: center;
 }
 
-.uiel_current_playlist_title span {
+.uiel_current_playlist_title span,
+.uiel_walkman_title span {
     position: relative;
     display: block;
     display: flex;
@@ -346,7 +348,8 @@ main {
     font-size: .85em;
 }
 
-.uiel_current_playlist_title span::before {
+.uiel_current_playlist_title span::before,
+.uiel_walkman_title span::before {
     content: '';
     flex: 1;
     margin-right: .5em;
@@ -357,7 +360,8 @@ main {
     box-shadow: 0px 1px 0px #0009;
 }
 
-.uiel_current_playlist_title span::after {
+.uiel_current_playlist_title span::after,
+.uiel_walkman_title span::after {
     content: '';
     flex: 1;
     background-color: #ebd4a1;
@@ -386,6 +390,7 @@ main {
     flex-direction: column;
     justify-content: stretch;
     min-width: 25em;
+    background: linear-gradient(to bottom, #000, #444);
 }
 
 .uiel_secondary::before {
@@ -411,7 +416,7 @@ main {
 }
 
 .uiel_current_playlist li {
-    border: 1px solid #333;
+    border: 1px solid #000;
     background-color: #111;
     padding: 0 !important;
     white-space: nowrap;
@@ -474,6 +479,10 @@ main {
     align-self: stretch;
 }
 
+.uiel_remove_playlist_item:hover {
+    background-color: red !important;
+}
+
 .drop-zone--over {
     transition: all .2s;
     opacity: .3;
@@ -482,6 +491,7 @@ main {
 
 /* Media query */
 @media (max-width: 500px) {
+    
     main {
         width: 100%;
         height: 100%;

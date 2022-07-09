@@ -10,7 +10,7 @@
   </head>
   <body>
     <main>
-      <p class="uiel_current_playlist_title"><span>walkman</span></p>
+      <p class="uiel_walkman_title"><span>walkman</span></p>
       <section class="uiel_core">
         <figure class="uiel_cover_visual"></figure>
         <p class="uiel_current_file"></p>
@@ -58,8 +58,8 @@
       const jsmediatags = window.jsmediatags;
 
       let currentlyPlaying;
-      let onRepeat = false;
-      let onShuffle = false;
+      let isOnRepeat = false;
+      let isOnShuffle = false;
       let walkmanPlaylist = [];
 
       function getFormattedTime(time) {
@@ -141,7 +141,7 @@
 
             newPlaylistItem.classList.remove("drop-zone--over");
 
-            walkmanCommands.setOrder(onShuffle);
+            walkmanCommands.setOrder(isOnShuffle);
           });
 
           //
@@ -157,7 +157,7 @@
           audioSource.addEventListener("ended", (e) => {
             if (e.target.parentElement.nextElementSibling) {
               walkmanCommands.next(e.target.parentElement);
-            } else if (!onRepeat) {
+            } else if (!isOnRepeat) {
               currentlyPlaying.style.backgroundColor = "";
               currentlyPlaying = null;
               walkman_ui.currentFileName.innerText = "...";
@@ -230,8 +230,11 @@
                 const btnToRemove = document.createElement("button");
                 btnToRemove.classList.add("uiel_remove_playlist_item");
                 btnToRemove.addEventListener("click", (e) => {
+                  if (item === currentlyPlaying) {
+                    walkmanCommands.next(item);
+                  }
                   item.remove();
-                  walkmanCommands.setOrder(onShuffle);
+                  walkmanCommands.setOrder(isOnShuffle);
                 });
 
                 const track_title_separator = document.createElement("span");
@@ -249,7 +252,7 @@
                   tracks.forEach((track) =>
                     walkman_ui.currentPlaylist.append(track)
                   );
-                  walkmanCommands.setOrder(onShuffle);
+                  walkmanCommands.setOrder(isOnShuffle);
                   walkman_ui.secondarySection.classList.remove(
                     "loading_playlist"
                   );
@@ -269,7 +272,7 @@
                 btnToRemove.classList.add("uiel_remove_playlist_item");
                 btnToRemove.addEventListener("click", (e) => {
                   item.remove();
-                  walkmanCommands.setOrder(onShuffle);
+                  walkmanCommands.setOrder(isOnShuffle);
                 });
 
                 item.append(titleEl, btnToRemove);
@@ -279,7 +282,7 @@
                   tracks.forEach((track) =>
                     walkman_ui.currentPlaylist.append(track)
                   );
-                  walkmanCommands.setOrder(onShuffle);
+                  walkmanCommands.setOrder(isOnShuffle);
                   walkman_ui.secondarySection.classList.remove(
                     "loading_playlist"
                   );
@@ -306,7 +309,7 @@
           let currentIndex = walkmanPlaylist.indexOf(file);
 
           if (currentIndex + 1 === walkmanPlaylist.length) {
-            if (onShuffle || onRepeat) {
+            if (isOnShuffle || isOnRepeat) {
               this.play(walkmanPlaylist[0]);
             }
           } else {
@@ -392,7 +395,7 @@
 
           list.forEach((track) => walkmanPlaylist.push(track));
 
-          if (onShuffle) {
+          if (isOnShuffle) {
             walkmanPlaylist = walkmanPlaylist.sort(
               (a, b) => 0.5 - Math.random()
             );
@@ -417,14 +420,14 @@
       walkman_ui.core
         .querySelector('[data-command="repeat"]')
         .addEventListener("change", (e) => {
-          onRepeat = e.target.checked;
+          isOnRepeat = e.target.checked;
         });
 
       walkman_ui.core
         .querySelector('[data-command="shuffle"]')
         .addEventListener("change", (e) => {
-          onShuffle = e.target.checked;
-          walkmanCommands.setOrder(onShuffle);
+          isOnShuffle = e.target.checked;
+          walkmanCommands.setOrder(isOnShuffle);
         });
 
       walkman_ui.volumeRange.addEventListener("change", (e) => {
@@ -445,6 +448,12 @@
         e.preventDefault();
         walkmanCommands.add(e.dataTransfer.files);
       });
+
+      walkman_ui.secondarySection
+        .querySelector(".uiel_current_playlist_title")
+        .addEventListener("dblclick", (e) => {
+          walkman_ui.currentPlaylist.classList.toggle("hidden");
+        });
 
       // Audio Viz
       const file = document.querySelector("[data-command='add'] input");
