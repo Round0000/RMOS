@@ -1,0 +1,352 @@
+.app_window[data-appid="walkman"] .app_window__main {
+    padding: 0;
+    overflow: hidden;
+    position: relative;
+    height: 100%;
+    flex: 1;
+}
+
+main {
+    width: 400px;
+    max-width: 95vw;
+    margin: 0 auto;
+    outline: 2px solid #333;
+    background-color: #fff;
+}
+
+.uiel_walkman_title {
+    background-color: #fff;
+    color: #333;
+    text-align: center;
+    padding: .5em;
+}
+
+.uiel_core {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 2em;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    background-color: #000;
+    mix-blend-mode: multiply;
+    padding-bottom: 1em;
+}
+
+.uiel_cover_visual {
+    border: 3px solid white;
+    border-radius: 100%;
+    height: 180px;
+    width: 180px;
+    background-repeat: no-repeat;
+    flex-shrink: 0;
+    background-image: url(../../../temporary_/souvlaki.jpg);
+    background-size: cover;
+}
+
+.uiel_cover_visual::before {
+    content: '';
+    inset: 0;
+    position: absolute;
+    /* background-image: url(../../../temporary_/souvlaki.jpg); */
+    background-image: var(--coverImage);
+    background-color: #222;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    z-index: -1;
+    filter: blur(16px);
+    opacity: .5;
+    transform: scale(1.2);
+}
+
+.uiel_current_file {
+    margin: .5em;
+    font-size: 1.5rem;
+    color: #fff;
+    text-shadow: 1px 1px 1px #0005;
+    height: 3em;
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+}
+
+.uiel_current_file span {
+    display: block;
+    text-align: center;
+}
+
+.uiel_current_file span:last-of-type {
+    font-size: .75em;
+}
+
+.uiel_progress {
+    display: block;
+    width: 80%;
+    box-shadow: none;
+    align-self: center;
+    height: 16px;
+    background-color: #fff5;
+    position: relative;
+    overflow: hidden;
+    box-shadow: inset 1px 1px 3px #0005;
+    border-radius: 2px;
+    margin-top: -16px;
+}
+
+.uiel_progress div {
+    position: absolute;
+    inset: 0;
+    width: 0;
+    background: linear-gradient(to left, #fff 4px, #0ae509 0, #0ae50966);
+    box-shadow: inset 1px 1px 3px #0005;
+    pointer-events: none;
+}
+
+.uiel_smallviz {
+    width: 80%;
+    display: flex;
+    justify-content: space-between;
+    color: white;
+    text-shadow: 1px 1px 1px #0005;
+}
+
+.uiel_smallviz p {
+    transform: translateY(-16px);
+}
+
+canvas {
+    display: none;
+    height: 140px;
+    width: 400px;
+}
+
+.uiel_buttons {
+    display: flex;
+}
+
+.uiel_buttons>button,
+.uiel_buttons>input {
+    width: 48px;
+    height: 48px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 16px;
+    background-color: #eee;
+    border-radius: 100%;
+    margin: 4px;
+    box-shadow: 2px 2px 2px #0005;
+    transition: all .2s;
+}
+
+#walkman_file_input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+}
+
+[data-command="add"] {
+    background: url("../../../assets/icons/apps/walkman/command_add.svg");
+    position: relative;
+}
+
+[data-command="add"]:focus-within:not(:focus-visible) {
+    outline: 2px solid var(--clr-orange) !important;
+    outline-offset: -2px;
+}
+
+[data-command="add"] input {
+    all: unset;
+    position: absolute;
+    inset: -3px;
+    opacity: 0;
+}
+
+[data-command="repeat"] {
+    background: url("../../../assets/icons/apps/walkman/command_repeat.svg");
+}
+
+[data-command="shuffle"] {
+    background: url("../../../assets/icons/apps/walkman/command_shuffle.svg");
+}
+
+[data-command="prev"] {
+    background: url("../../../assets/icons/apps/walkman/command_prev.svg");
+}
+
+[data-command="play"] {
+    background: url("../../../assets/icons/apps/walkman/command_play.svg");
+}
+
+[data-command="halt"] {
+    background: url("../../../assets/icons/apps/walkman/command_halt.svg");
+}
+
+[data-command="next"] {
+    background: url("../../../assets/icons/apps/walkman/command_next.svg");
+}
+
+/* Volume range */
+.uiel_volume {
+    margin: 1em;
+    -webkit-appearance: none;
+    box-shadow: none;
+    width: 40%;
+}
+
+.uiel_volume:focus {
+    outline: none;
+}
+
+.uiel_volume::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 10px;
+    cursor: pointer;
+    animate: 0.2s;
+    box-shadow: 1px 1px 2px #0005;
+    background: linear-gradient(to right, #fff, #777);
+    border: 1px solid #222;
+    border-radius: 6px;
+}
+
+.uiel_volume::-webkit-slider-thumb {
+    box-shadow: 1px 1px 2px #0005;
+    height: 17px;
+    width: 16px;
+    background-color: #fff9;
+    cursor: pointer;
+    -webkit-appearance: none;
+    margin-top: -4px;
+}
+
+
+
+.uiel_volume:focus::-webkit-slider-runnable-track {
+    background: linear-gradient(to right, #fff, #777);
+}
+
+.uiel_volume::-moz-range-track {
+    width: 100%;
+    height: 10px;
+    cursor: pointer;
+    animate: 0.2s;
+    box-shadow: 1px 1px 2px #0005;
+    background: linear-gradient(to right, #fff, #777);
+}
+
+.uiel_volume::-moz-range-thumb {
+    box-shadow: 1px 1px 2px #0005;
+    height: 18px;
+    width: 16px;
+    background: repeating-linear-gradient(to right, #222, transparent);
+    background-size: 4px;
+    cursor: pointer;
+}
+
+.uiel_volume::-ms-track {
+    width: 100%;
+    height: 10px;
+    cursor: pointer;
+    animate: 0.2s;
+    background: transparent;
+    border-color: transparent;
+    color: transparent;
+}
+
+.uiel_volume::-ms-fill-lower {
+    background: #3071A9;
+    border-radius: 10px;
+    box-shadow: 1px 1px 2px #0005;
+}
+
+.uiel_volume::-ms-fill-upper {
+    background: #3071A9;
+    border-radius: 10px;
+    box-shadow: 1px 1px 2px #0005;
+}
+
+.uiel_volume::-ms-thumb {
+    margin-top: 1px;
+    box-shadow: 1px 1px 2px #0005;
+    height: 18px;
+    width: 16px;
+    background: repeating-linear-gradient(to right, #222, transparent);
+    background-size: 4px;
+    cursor: pointer;
+}
+
+.uiel_volume:focus::-ms-fill-lower {
+    background: #3071A9;
+}
+
+.uiel_volume:focus::-ms-fill-upper {
+    background: #3071A9;
+}
+
+.uiel_volume::-webkit-slider-runnable-track,
+.uiel_volume::-moz-range-track,
+.uiel_volume::-webkit-slider-runnable-track {
+    background: white !important;
+}
+
+.uiel_core button:active,
+.uiel_core input[type="checkbox"]:checked {
+    background-color: #fff;
+    outline: 2px solid #fff5;
+    outline-offset: 2px;
+    transform: scale(.9);
+}
+
+
+/* Secondary section */
+.uiel_secondary {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+}
+
+.uiel_secondary::before {
+    position: absolute;
+    content: url(../../icons/apps/walkman/loader.svg);
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+    background-repeat: no-repeat;
+    background-position: center;
+    user-select: none;
+    visibility: hidden;
+    opacity: 0;
+    transition: .5s;
+    z-index: 1;
+}
+
+.uiel_current_playlist_title {
+    background-color: #fff;
+    color: #333;
+    text-align: center;
+    padding: .5em;
+}
+
+.uiel_current_playlist {
+    height: 30vh;
+    overflow-y: scroll;
+    margin: auto;
+    width: 100%;
+    padding: 4px;
+    margin-bottom: 4px;
+    position: relative;
+    border-top: 2px solid #222;
+    background: linear-gradient(-85deg, #f1f5f9, #cbd5e1);
+}
+
+.uiel_current_playlist li {
+    box-shadow: 1px 1px 2px #0005;
+    border-radius: 2px;
+    background-color: #fffd;
+    padding: .25em .5em;
+    margin-bottom: .25em;
+}

@@ -6,14 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Walkman</title>
     <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" href="./assets/styles/apps/walkman.css" />
+    <link rel="stylesheet" href="./assets/styles/apps/walkman_skin2.css" />
   </head>
   <body>
     <main>
       <p class="uiel_walkman_title"><span>walkman</span></p>
       <section class="uiel_core">
         <figure class="uiel_cover_visual"></figure>
-        <p class="uiel_current_file"></p>
+        <p class="uiel_current_file">
+          <span>Souvlaki Space Station</span><span>Slowdive</span>
+        </p>
         <div class="uiel_smallviz">
           <p class="uiel_currentTrackTime">...</p>
           <p class="uiel_totalTrackTime">...</p>
@@ -325,11 +327,24 @@
             el.pause();
             el.currentTime = 0;
           });
-          walkman_ui.currentFileName.innerText = file.textContent;
+          // walkman_ui.currentFileName.innerText = file.textContent;
+
+          const artistEl = document.createElement("span");
+          artistEl.classList.add("track_artist");
+          artistEl.innerText = file.dataset.tagsArtist;
+          const titleEl = document.createElement("span");
+          titleEl.classList.add("track_title");
+          titleEl.innerText = file.dataset.tagsTitle;
+
+          walkman_ui.currentFileName.innerHTML = "";
+          walkman_ui.currentFileName.append(artistEl, titleEl);
+
           walkman_ui.cover.style.backgroundImage =
             file.dataset.tagsCover === "undefined"
               ? ""
               : file.dataset.tagsCover;
+
+              walkman_ui.cover.style.setProperty('--coverImage', file.dataset.tagsCover)
 
           if (audio.played.length === 0) {
             initAudioViz(audio);
