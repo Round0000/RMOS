@@ -6,10 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Walkman</title>
     <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" href="./assets/styles/apps/walkman.css" />
+    <link
+      id="walkman_stylesheet"
+      rel="stylesheet"
+      href="./assets/styles/apps/walkman.css"
+    />
   </head>
   <body>
-    <main>
+    <main data-skin="1">
       <p class="uiel_walkman_title"><span>walkman</span></p>
       <section class="uiel_core">
         <figure class="uiel_cover_visual"></figure>
@@ -338,11 +342,16 @@
           track_title_separator.innerText = " - ";
 
           walkman_ui.currentFileName.innerHTML = "";
-          walkman_ui.currentFileName.append(
-            artistEl,
-            track_title_separator,
-            titleEl
-          );
+
+          if (document.querySelector("main").dataset.skin === "2") {
+            walkman_ui.currentFileName.append(titleEl, artistEl);
+          } else {
+            walkman_ui.currentFileName.append(
+              artistEl,
+              track_title_separator,
+              titleEl
+            );
+          }
 
           walkman_ui.cover.style.backgroundImage =
             file.dataset.tagsCover === "undefined"
@@ -476,6 +485,18 @@
         .querySelector(".uiel_current_playlist_title")
         .addEventListener("dblclick", (e) => {
           walkman_ui.currentPlaylist.classList.toggle("hidden");
+        });
+
+      document
+        .querySelector(".uiel_walkman_title")
+        .addEventListener("dblclick", (e) => {
+          if (document.querySelector("main").dataset.skin === "1") {
+            walkman_stylesheet.href = "./assets/styles/apps/walkman_skin2.css";
+            document.querySelector("main").dataset.skin = "2";
+          } else {
+            walkman_stylesheet.href = "./assets/styles/apps/walkman.css";
+            document.querySelector("main").dataset.skin = "1";
+          }
         });
 
       // Audio Viz

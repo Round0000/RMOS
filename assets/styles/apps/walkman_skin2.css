@@ -6,12 +6,20 @@
     flex: 1;
 }
 
+body {
+    display: initial;
+}
+
 main {
     width: 400px;
     max-width: 95vw;
-    margin: 0 auto;
-    outline: 2px solid #333;
+    height: 96vh;
+    margin: 2vh auto 2vh;
     background-color: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    user-select: none;
+    flex-direction: column;
 }
 
 .uiel_walkman_title {
@@ -19,6 +27,12 @@ main {
     color: #333;
     text-align: center;
     padding: .5em;
+}
+
+.uiel_walkman_title,
+.uiel_current_playlist_title {
+    text-transform: uppercase;
+    font-weight: bold;
 }
 
 .uiel_core {
@@ -41,7 +55,7 @@ main {
     width: 180px;
     background-repeat: no-repeat;
     flex-shrink: 0;
-    background-image: url(../../../temporary_/souvlaki.jpg);
+    background-image: url(../../icons/apps/walkman/nocover.svg);
     background-size: cover;
 }
 
@@ -63,18 +77,20 @@ main {
 
 .uiel_current_file {
     margin: .5em;
+    margin-bottom: 0;
     font-size: 1.5rem;
     color: #fff;
     text-shadow: 1px 1px 1px #0005;
-    height: 3em;
-    display: flex;
-    flex-direction: column-reverse;
-    justify-content: flex-end;
+    max-width: 80%;
+    height: 2em;
 }
 
 .uiel_current_file span {
     display: block;
     text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .uiel_current_file span:last-of-type {
@@ -92,7 +108,6 @@ main {
     overflow: hidden;
     box-shadow: inset 1px 1px 3px #0005;
     border-radius: 2px;
-    margin-top: -16px;
 }
 
 .uiel_progress div {
@@ -113,7 +128,7 @@ main {
 }
 
 .uiel_smallviz p {
-    transform: translateY(-16px);
+    height: 1.25em;
 }
 
 canvas {
@@ -305,6 +320,7 @@ canvas {
     display: flex;
     flex-direction: column;
     justify-content: stretch;
+    flex: 1;
 }
 
 .uiel_secondary::before {
@@ -325,28 +341,78 @@ canvas {
 }
 
 .uiel_current_playlist_title {
-    background-color: #fff;
+    background: linear-gradient(to bottom, #eee, #fff, #ddd);
     color: #333;
     text-align: center;
     padding: .5em;
+    padding-top: .75em;
+    border-bottom: 1px solid #ccc;
 }
 
 .uiel_current_playlist {
-    height: 30vh;
+    max-height: 80%;
     overflow-y: scroll;
     margin: auto;
     width: 100%;
-    padding: 4px;
+    /* padding: 4px; */
     margin-bottom: 4px;
     position: relative;
-    border-top: 2px solid #222;
     background: linear-gradient(-85deg, #f1f5f9, #cbd5e1);
+    list-style: none;
+    flex: 1;
 }
 
 .uiel_current_playlist li {
     box-shadow: 1px 1px 2px #0005;
     border-radius: 2px;
     background-color: #fffd;
-    padding: .25em .5em;
     margin-bottom: .25em;
+    padding-left: .25em;
+    display: flex;
+    align-items: center;
+    gap: .25em;
+}
+
+.uiel_current_playlist li::before {
+    content: attr(data-order) ".";
+    width: 1.5em;
+    color: #555;
+    flex-shrink: 0;
+    margin: 2px 4px;
+}
+
+.uiel_current_playlist .track_artist {
+    font-weight: bold;
+}
+
+.uiel_current_playlist .track_title {
+    font-style: italic;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.uiel_remove_playlist_item {
+    width: 2em;
+    height: 2em;
+    background-color: #ddd;
+    background-image: url(../../icons/apps/walkman/remove_track.svg);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 16px;
+    border-left: 1px solid #bbb;
+    flex-shrink: 0;
+    background-blend-mode: difference;
+}
+
+.uiel_remove_playlist_item:hover {
+    background-color: hsl(348, 85%, 60%) !important;
+    background-blend-mode: lighten;
+}
+
+.drop-zone--over {
+    transition: all .2s;
+    opacity: .3;
+    color: #fff;
 }
