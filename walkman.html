@@ -13,9 +13,7 @@
       <p class="uiel_walkman_title"><span>walkman</span></p>
       <section class="uiel_core">
         <figure class="uiel_cover_visual"></figure>
-        <p class="uiel_current_file">
-          <span>Souvlaki Space Station</span><span>Slowdive</span>
-        </p>
+        <p class="uiel_current_file"><span></span><span></span></p>
         <div class="uiel_smallviz">
           <p class="uiel_currentTrackTime">...</p>
           <p class="uiel_totalTrackTime">...</p>
@@ -336,15 +334,25 @@
           titleEl.classList.add("track_title");
           titleEl.innerText = file.dataset.tagsTitle;
 
+          const track_title_separator = document.createElement("span");
+          track_title_separator.innerText = " - ";
+
           walkman_ui.currentFileName.innerHTML = "";
-          walkman_ui.currentFileName.append(artistEl, titleEl);
+          walkman_ui.currentFileName.append(
+            artistEl,
+            track_title_separator,
+            titleEl
+          );
 
           walkman_ui.cover.style.backgroundImage =
             file.dataset.tagsCover === "undefined"
               ? ""
               : file.dataset.tagsCover;
 
-              walkman_ui.cover.style.setProperty('--coverImage', file.dataset.tagsCover)
+          walkman_ui.cover.style.setProperty(
+            "--coverImage",
+            file.dataset.tagsCover
+          );
 
           if (audio.played.length === 0) {
             initAudioViz(audio);
