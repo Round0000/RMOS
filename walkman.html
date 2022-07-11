@@ -53,7 +53,12 @@
       </section>
       <section class="uiel_secondary">
         <p class="uiel_current_playlist_title"><span>Current playlist</span></p>
-        <ol class="uiel_current_playlist"></ol>
+        <ol class="uiel_current_playlist">
+          <p id="empty_playlist">
+            Ajouter vos fichiers ici via le bouton [ + ] ou par glisser-déposer
+            depuis un dossier.
+          </p>
+        </ol>
       </section>
     </main>
 
@@ -162,20 +167,7 @@
             if (e.target.parentElement.nextElementSibling) {
               walkmanCommands.next(e.target.parentElement);
             } else if (!isOnRepeat) {
-              currentlyPlaying.style.backgroundColor = "";
-              currentlyPlaying = null;
-              walkman_ui.currentFileName.innerText = "...";
-              document
-                .querySelector("[data-command='play']")
-                .classList.remove("hidden");
-              document
-                .querySelector("[data-command='halt']")
-                .classList.add("hidden");
-              walkman_ui.progressBar.style.width = "";
-              document.querySelector(".uiel_currentTrackTime").innerText =
-                "...";
-              document.querySelector(".uiel_totalTrackTime").innerText = "...";
-              walkman_ui.cover.style.backgroundImage = "";
+              walkmanCommands.clearPlayer();
             } else {
               walkmanCommands.play();
             }
@@ -238,7 +230,11 @@
                     walkmanCommands.next(item);
                   }
                   item.remove();
-                  walkmanCommands.setOrder(isOnShuffle);
+                  if (walkmanPlaylist.length > 1) {
+                    walkmanCommands.setOrder(isOnShuffle);
+                  } else {
+                    walkmanCommands.clearPlayer();
+                  }
                 });
 
                 const track_title_separator = document.createElement("span");
@@ -320,16 +316,35 @@
             this.play(walkmanPlaylist[currentIndex + 1]);
           }
         },
-        play(file = walkmanPlaylist[0]) {
+        play(file = (walkmanPlaylist[0] || walkman_ui.currentPlaylist.querySelector('li'))) {
+          console.log(file)
+          console.log(walkman_ui.currentPlaylist.querySelector('li'))
           this.halt(file);
-          const audio = file.querySelector("audio");
-          walkman_ui.currentPlaylist.querySelectorAll("audio").forEach((el) => {
-            if (el.parentElement === file) return;
+
+          walkman_ui.commandButtons.forEach((btn) => (btn.disabled = true));
+          walkman_ui.core
+            .querySelectorAll(".uiel_buttons > input")
+            .forEach((btn) => (btn.disabled = true));
+          setTimeout(() => {
+            walkman_ui.commandButtons.forEach((btn) => (btn.disabled = false));
+            walkman_ui.core
+              .querySelectorAll(".uiel_buttons > input")
+              .forEach((btn) => (btn.disabled = false));
+          }, 500);
+
+          let audio;
+
+          if (file.querySelector("audio")) {
+            audio = file.querySelector("audio");
+          }
+          walkmanPlaylist.forEach((el) => {
+            if (el === file) return;
+
+            el = el.querySelector("audio");
 
             el.pause();
             el.currentTime = 0;
           });
-          // walkman_ui.currentFileName.innerText = file.textContent;
 
           const artistEl = document.createElement("span");
           artistEl.classList.add("track_artist");
@@ -340,11 +355,16 @@
 
           const track_title_separator = document.createElement("span");
           track_title_separator.innerText = " - ";
+          track_title_separator.classList.add("track_title_separator");
 
           walkman_ui.currentFileName.innerHTML = "";
 
           if (document.querySelector("main").dataset.skin === "2") {
-            walkman_ui.currentFileName.append(titleEl, artistEl);
+            walkman_ui.currentFileName.append(
+              titleEl,
+              track_title_separator,
+              artistEl
+            );
           } else {
             walkman_ui.currentFileName.append(
               artistEl,
@@ -363,13 +383,14 @@
             file.dataset.tagsCover
           );
 
-          if (audio.played.length === 0) {
+          if (
+            audio.played.length === 0 &&
+            document.querySelector("main").dataset.skin === "1"
+          ) {
             initAudioViz(audio);
           }
 
-          currentlyPlaying = file;
-
-          audio.play();
+          
 
           document
             .querySelector("[data-command='play']")
@@ -384,11 +405,14 @@
 
           file.style.backgroundColor = "#fff3";
 
+          currentlyPlaying = file;
+          audio.play();
+
           // Scroll into view
-          // currentlyPlaying.scrollIntoView({
-          //   behavior: "smooth",
-          //   block: "center",
-          // });
+          currentlyPlaying.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
 
           //
         },
@@ -436,6 +460,21 @@
           for (i = 0; i < walkmanPlaylist.length; i++) {
             walkmanPlaylist[i].dataset.order = i + 1;
           }
+        },
+        clearPlayer() {
+          currentlyPlaying.style.backgroundColor = "";
+          currentlyPlaying = null;
+          walkman_ui.currentFileName.innerText = "...";
+          document.querySelector(".uiel_currentTrackTime").innerText = "...";
+          document.querySelector(".uiel_totalTrackTime").innerText = "...";
+          document
+            .querySelector("[data-command='play']")
+            .classList.remove("hidden");
+          document
+            .querySelector("[data-command='halt']")
+            .classList.add("hidden");
+          walkman_ui.progressBar.style.width = "";
+          walkman_ui.cover.style.backgroundImage = "";
         },
       };
 
@@ -625,6 +664,9 @@
         // audio.play();
         renderFrame();
       }
+
+      // Viewport height
+      document.body.style.height = window.visualViewport.height + "px";
     </script>
   </body>
 </html>

@@ -12,6 +12,7 @@ main {
     border: 2px solid #222;
     background: linear-gradient(to right, #151421 20%, #3a3b5b 60% 80%, #252539);
     user-select: none;
+    scroll-behavior: smooth;
 }
 
 .uiel_core {
@@ -382,6 +383,18 @@ main {
     position: relative;
     outline: 1px solid #000;
     outline-offset: -1px;
+}
+
+#empty_playlist {
+    max-width: 80%;
+    margin: 3em auto;
+    text-align: center;
+    font-style: italic;
+    display: none;
+}
+
+#empty_playlist:first-child:last-child {
+    display: block;
 }
 
 .uiel_secondary {
