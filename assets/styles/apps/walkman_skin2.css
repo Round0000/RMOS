@@ -342,7 +342,7 @@ canvas {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #fff;
+    background-color: #111;
     background-repeat: no-repeat;
     background-position: center;
     user-select: none;
@@ -350,6 +350,11 @@ canvas {
     opacity: 0;
     transition: .5s;
     z-index: 1;
+}
+
+.uiel_secondary.loading_playlist::before {
+    visibility: visible;
+    opacity: 1;
 }
 
 .uiel_current_playlist_title {
