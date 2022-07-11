@@ -11,6 +11,13 @@
       rel="stylesheet"
       href="./assets/styles/apps/walkman.css"
     />
+    <link
+      id="walkman_stylesheet_2"
+      rel="stylesheet"
+      disabled
+      href="./assets/styles/apps/walkman_skin2.css
+      "
+    />
   </head>
   <body>
     <main data-skin="1">
@@ -173,6 +180,13 @@
             }
           });
 
+          newPlaylistItem.setAttribute("tabindex", 0);
+          newPlaylistItem.addEventListener("keyup", (e) => {
+            if (e.code === "Enter" || e.code === "Space") {
+              walkmanCommands.play(newPlaylistItem);
+            }
+          });
+
           return newPlaylistItem;
         },
         add(files) {
@@ -316,9 +330,12 @@
             this.play(walkmanPlaylist[currentIndex + 1]);
           }
         },
-        play(file = (walkmanPlaylist[0] || walkman_ui.currentPlaylist.querySelector('li'))) {
-          console.log(file)
-          console.log(walkman_ui.currentPlaylist.querySelector('li'))
+        play(
+          file = walkmanPlaylist[0] ||
+            walkman_ui.currentPlaylist.querySelector("li")
+        ) {
+          console.log(file);
+          console.log(walkman_ui.currentPlaylist.querySelector("li"));
           this.halt(file);
 
           walkman_ui.commandButtons.forEach((btn) => (btn.disabled = true));
@@ -389,8 +406,6 @@
           ) {
             initAudioViz(audio);
           }
-
-          
 
           document
             .querySelector("[data-command='play']")
@@ -529,12 +544,21 @@
       document
         .querySelector(".uiel_walkman_title")
         .addEventListener("dblclick", (e) => {
-          if (document.querySelector("main").dataset.skin === "1") {
-            walkman_stylesheet.href = "./assets/styles/apps/walkman_skin2.css";
-            document.querySelector("main").dataset.skin = "2";
+          const main = document.querySelector("main");
+
+          main.style.opacity = 0;
+          setTimeout(() => {
+            main.style.opacity = "";
+          }, 200);
+
+          if (main.dataset.skin === "1") {
+            walkman_stylesheet_2.disabled = false;
+            walkman_stylesheet.disabled = true;
+            main.dataset.skin = "2";
           } else {
-            walkman_stylesheet.href = "./assets/styles/apps/walkman.css";
-            document.querySelector("main").dataset.skin = "1";
+            walkman_stylesheet.disabled = false;
+            walkman_stylesheet_2.disabled = true;
+            main.dataset.skin = "1";
           }
         });
 
