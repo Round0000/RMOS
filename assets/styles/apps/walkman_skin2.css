@@ -374,6 +374,17 @@ canvas {
     list-style: none;
     flex: 1;
     padding-bottom: 2vw;
+    position: relative;
+}
+
+.uiel_secondary::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2em;
+    background: linear-gradient(to top, #0002, transparent);
 }
 
 #empty_playlist {
@@ -392,7 +403,7 @@ canvas {
     box-shadow: 1px 1px 2px #0005;
     border-radius: 2px;
     background-color: #fffd;
-    margin: .25em 4px;
+    margin: .2em 4px;
     border: 1px solid #0002;
     padding-left: .25em;
     display: flex;
@@ -435,11 +446,22 @@ canvas {
     border-left: 1px solid #bbb;
     flex-shrink: 0;
     background-blend-mode: difference;
+    transition: all .2s;
 }
 
 .uiel_remove_playlist_item:hover {
     background-color: hsl(348, 85%, 60%) !important;
     background-blend-mode: lighten;
+}
+
+.uiel_currentlyPlaying {
+    background-color: #0009 !important;
+    color: #fff;
+    transition: all .5s;
+}
+
+.uiel_currentlyPlaying::before {
+    color: #fffd !important;
 }
 
 .drop-zone--over {

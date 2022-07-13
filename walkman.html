@@ -334,8 +334,6 @@
           file = walkmanPlaylist[0] ||
             walkman_ui.currentPlaylist.querySelector("li")
         ) {
-          console.log(file);
-          console.log(walkman_ui.currentPlaylist.querySelector("li"));
           this.halt(file);
 
           walkman_ui.commandButtons.forEach((btn) => (btn.disabled = true));
@@ -348,6 +346,14 @@
               .querySelectorAll(".uiel_buttons > input")
               .forEach((btn) => (btn.disabled = false));
           }, 500);
+
+          if (
+            walkman_ui.currentPlaylist.querySelector(".uiel_currentlyPlaying")
+          ) {
+            walkman_ui.currentPlaylist
+              .querySelector(".uiel_currentlyPlaying")
+              .classList.remove("uiel_currentlyPlaying");
+          }
 
           let audio;
 
@@ -418,7 +424,7 @@
           document.querySelector(".uiel_totalTrackTime").innerText =
             getFormattedTime(audio.duration);
 
-          file.style.backgroundColor = "#fff3";
+          file.classList.add("uiel_currentlyPlaying");
 
           currentlyPlaying = file;
           audio.play();
@@ -428,6 +434,12 @@
           //   behavior: "smooth",
           //   block: "center",
           // });
+
+          currentlyPlaying.scrollIntoView({
+            behavior: "smooth",
+            block: "nearest",
+            inline: "start",
+          });
 
           //
         },
